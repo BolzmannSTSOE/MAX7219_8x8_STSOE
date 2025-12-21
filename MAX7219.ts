@@ -6,6 +6,7 @@
  */
 
 //% weight=100 color=#006d19 icon="\uf00a" block="MAX7219 8x8"
+//% groups=['1. Setup', '2. Display text on matrixs', '3. Basic light control', '4. Set custom LED pattern on matrixs']
 namespace max7219_matrix {
 
     //Registers (command) for MAX7219
@@ -165,20 +166,20 @@ namespace max7219_matrix {
         let printPosition = _displayArray.length - 8
         let characters_index: number[] = []
         let currentChrIndex = 0
-        let currentFontArray: number[] = []
+        let currentLetterArray: number[] = []
         let nextChrCountdown = 1
         let chrCountdown: number[] = []
         let totalScrollTime = 0
         // clear screen and array
         for (let i = 0; i < _displayArray.length; i++) _displayArray[i] = 0
         clearAll()
-        // get font index of every characters and total scroll time needed
+        // get letter index of every characters and total scroll time needed
         for (let i = 0; i < text.length; i++) {
-            let index = font.indexOf(text.substr(i, 1))
+            let index = letter.indexOf(text.substr(i, 1))
             if (index >= 0) {
                 characters_index.push(index)
-                chrCountdown.push(font_matrix[index].length)
-                totalScrollTime += font_matrix[index].length
+                chrCountdown.push(letter_matrix[index].length)
+                totalScrollTime += letter_matrix[index].length
             }
         }
         totalScrollTime += _matrixNum * 8
@@ -187,10 +188,10 @@ namespace max7219_matrix {
             nextChrCountdown -= 1
             if (currentChrIndex < characters_index.length && nextChrCountdown == 0) {
                 // print a character just "outside" visible area
-                currentFontArray = font_matrix[characters_index[currentChrIndex]]
-                if (currentFontArray != null)
-                    for (let j = 0; j < currentFontArray.length; j++)
-                        _displayArray[printPosition + j] = currentFontArray[j]
+                currentLetterArray = letter_matrix[characters_index[currentChrIndex]]
+                if (currentLetterArray != null)
+                    for (let j = 0; j < currentLetterArray.length; j++)
+                        _displayArray[printPosition + j] = currentLetterArray[j]
                 // wait until current character scrolled into visible area
                 nextChrCountdown = chrCountdown[currentChrIndex]
                 currentChrIndex += 1
@@ -237,18 +238,18 @@ namespace max7219_matrix {
         let currentPosition = printPosition
         let characters_index: number[] = []
         let currentChrIndex = 0
-        let currentFontArray: number[] = []
-        // get font index of every characters
+        let currentLetterArray: number[] = []
+        // get letter index of every characters
         for (let i = 0; i < text.length; i++) {
-            let index = font.indexOf(text.substr(i, 1))
+            let index = letter.indexOf(text.substr(i, 1))
             if (index >= 0) characters_index.push(index)
         }
         // print characters into array from offset position
         while (currentPosition < _displayArray.length - 8) {
-            currentFontArray = font_matrix[characters_index[currentChrIndex]]
-            if (currentFontArray != null)
-                for (let j = 0; j < currentFontArray.length; j++)
-                    _displayArray[printPosition++] = currentFontArray[j]
+            currentletterArray = letter_matrix[characters_index[currentChrIndex]]
+            if (currentLetterArray != null)
+                for (let j = 0; j < currentLetterArray.length; j++)
+                    _displayArray[printPosition++] = currentLetterArray[j]
             currentChrIndex += 1
             if (currentChrIndex == characters_index.length) break
         }
@@ -279,8 +280,8 @@ namespace max7219_matrix {
     export function displayTextAlignRight(text: string, clear: boolean) {
         let len = 0
         for (let i = 0; i < text.length; i++) {
-            let index = font.indexOf(text.substr(i, 1))
-            if (index >= 0) len += font_matrix[index].length
+            let index = letter.indexOf(text.substr(i, 1))
+            if (index >= 0) len += letter_matrix[index].length
         }
         displayText(text, _matrixNum * 8 - len, clear)
     }
@@ -359,10 +360,10 @@ namespace max7219_matrix {
     }
 
     /**
-    * Add a custom character from a number array at the end of the extension's font library.
+    * Add a custom character from a number array at the end of the extension's letter library.
     * Each number in the array is 0-255, the decimal version of column's byte number.
     */
-    //% block="Add custom character $chr|number array $customCharArray|to the extension font library"
+    //% block="Add custom character $chr|number array $customCharArray|to the extension letter library"
     //% chr.defl=""
     //% blockExternalInputs=true
     //% group="2. Display text on matrixs"
@@ -370,25 +371,25 @@ namespace max7219_matrix {
     export function addCustomChr(chr: string, customCharArray: number[]) {
         if (chr != null && chr.length == 1 && customCharArray != null) {
             // add new character
-            font.push(chr)
-            font_matrix.push(customCharArray)
+            letter.push(chr)
+            letter_matrix.push(customCharArray)
         }
     }
 
     /**
-    * Display all fonts in the extension font library
+    * Display all letters in the extension letter library
     */
-    //% block="Display all fonts at delay $delay" delay.min=0 delay.defl=200 group="2. Display text on matrixs" advanced=true
-    export function fontDemo(delay: number) {
+    //% block="Display all letters at delay $delay" delay.min=0 delay.defl=200 group="2. Display text on matrixs" advanced=true
+    export function letterDemo(delay: number) {
         let offsetIndex = 0
         clearAll()
         // print all characters on all matrixs
-        for (let i = 1; i < font_matrix.length; i++) {
+        for (let i = 1; i < letter_matrix.length; i++) {
             // print two blank spaces to "reset" a matrix
-            displayCustomCharacter(font_matrix[0], offsetIndex * 8, false)
-            displayCustomCharacter(font_matrix[0], offsetIndex * 8 + 4, false)
+            displayCustomCharacter(letter_matrix[0], offsetIndex * 8, false)
+            displayCustomCharacter(letter_matrix[0], offsetIndex * 8 + 4, false)
             // print a character
-            displayCustomCharacter(font_matrix[i], offsetIndex * 8, false)
+            displayCustomCharacter(letter_matrix[i], offsetIndex * 8, false)
             if (offsetIndex == _matrixNum - 1) offsetIndex = 0
             else offsetIndex += 1
             basic.pause(delay)
@@ -473,7 +474,7 @@ namespace max7219_matrix {
     /**
     * Set LEDs of all MAX7219s to a pattern from a 8x8 matrix variable (index 0=farthest on the chain)
     */
-    //% matrix.shadow="max7219_matrix__default8x8Pattern"
+    //% newMatrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Display 8x8 pattern $newMatrix on all matrixs" group="4. Set custom LED pattern on matrixs" advanced=true
     export function displayLEDsToAll(newMatrix: number[][]) {
         let columnValue = 0
@@ -581,9 +582,9 @@ namespace max7219_matrix {
         else if (matrix[x][y] == 0) matrix[x][y] = 1
     }
 
-    // ASCII fonts borrowed from https://github.com/lyle/matrix-led-font/blob/master/src/index.js
+    // ASCII letters borrowed from https://github.com/lyle/matrix-led-font/blob/master/src/index.js
 
-    let font = [" ", "!", "\"", "#", "$", "%", "&", "\'", "(", ")",
+    let letter = [" ", "!", "\"", "#", "$", "%", "&", "\'", "(", ")",
         "*", "+", ",", "-", ".", "/",
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
         ":", ";", "<", "=", ">", "?", "@",
@@ -594,7 +595,7 @@ namespace max7219_matrix {
         "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
         "{", "|", "}", "~", "^"]
 
-    let font_matrix = [
+    let letter_matrix = [
         [0b00000000,
             0b00000000,
             0b00000000,
@@ -1091,6 +1092,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
