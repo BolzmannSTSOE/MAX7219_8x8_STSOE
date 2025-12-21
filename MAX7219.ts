@@ -493,8 +493,9 @@ namespace max7219_matrix {
     }
 
 
-    
+    //% blockId=max7219_matrix_matrix8x8
     //% block="Image 8x8"
+    //% blockHidden=true
     //% imageLiteral=1
     //% imageLiteralColumns=8
     //% imageLiteralRows=8
@@ -506,6 +507,7 @@ namespace max7219_matrix {
     }
     
     //% block="8x8 pattern %im"
+    //% im.shadow="max7219_matrix_matrix8x8"   
     //% group="4. Set custom LED pattern on matrixs"
     export function pattern8x8(im: Image): number[][] {
         let m = getEmptyMatrix()
@@ -1076,5 +1078,6 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
