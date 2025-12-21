@@ -96,7 +96,7 @@ namespace max7219_matrix {
     * (internal function) rotate matrix
     */
     function _rotateMatrix(matrix: number[][]): number[][] {
-        if (_rotation == rotation_direction.none) return _cloneMatrix(matrix)
+        if (_rotation == rotation_direction.none) return matrix
         let m = getEmptyMatrix()
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
@@ -121,18 +121,6 @@ namespace max7219_matrix {
         return m
     }
 
-    /**
-    /* (internal function) Creates a clone matrix, which does not point to the original matrix.
-    */
-    function _cloneMatrix(matrix: number[][]): number[][] {
-        let m = getEmptyMatrix()
-        for (let x = 0; x < 8; x++) {
-            for (let y = 0; y < 8; y++) {
-                m[x][y] = matrix[x][y]
-            }
-        }
-        return m
-    }
 
     /**
     * Return a empty 8x8 number matrix variable
@@ -602,7 +590,7 @@ namespace max7219_matrix {
     //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir" rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
     export function rotate8x8Pattern(matrix: number[][], rotationDir: rotation_direction){
-        if (rotationDir == rotation_direction.none) return _cloneMatrix(matrix)
+        if (rotationDir == rotation_direction.none) return matrix
         let m = getEmptyMatrix()
         if (rotationDir == rotation_direction.clockwise){
             for (let x=0; x<4; x++){
@@ -643,7 +631,7 @@ namespace max7219_matrix {
     //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Flip an 8x8 pattern %matrix|direction %flipDir" flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
     export function flip8x8Pattern(matrix: number[][], flipDir: flip_direction){
-        if (flipDir == flip_direction.none) return _cloneMatrix(matrix)
+        if (flipDir == flip_direction.none) return matrix
         let m = getEmptyMatrix()
         if (flipDir == flip_direction.horizontal){
             for (let x = 0; x < 8; x++){
@@ -1185,3 +1173,4 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
