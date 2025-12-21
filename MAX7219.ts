@@ -97,29 +97,30 @@ namespace max7219_matrix {
     */
     function _rotateMatrix(matrix: number[][]): number[][] {
         let tmp = 0
+        let m = getEmptyMatrix()
         for (let i = 0; i < 4; i++) {
             for (let j = i; j < 7 - i; j++) {
                 tmp = matrix[i][j]
                 if (_rotation == rotation_direction.clockwise) { // clockwise
-                    matrix[i][j] = matrix[j][7 - i]
-                    matrix[j][7 - i] = matrix[7 - i][7 - j]
-                    matrix[7 - i][7 - j] = matrix[7 - j][i]
-                    matrix[7 - j][i] = tmp
+                    m[i][j] = matrix[j][7 - i]
+                    m[j][7 - i] = matrix[7 - i][7 - j]
+                    m[7 - i][7 - j] = matrix[7 - j][i]
+                    m[7 - j][i] = tmp
                 } else if (_rotation == rotation_direction.counterclockwise) { // counter-clockwise
-                    matrix[i][j] = matrix[7 - j][i]
-                    matrix[7 - j][i] = matrix[7 - i][7 - j]
-                    matrix[7 - i][7 - j] = matrix[j][7 - i]
-                    matrix[j][7 - i] = tmp
+                    m[i][j] = matrix[7 - j][i]
+                    m[7 - j][i] = matrix[7 - i][7 - j]
+                    m[7 - i][7 - j] = matrix[j][7 - i]
+                    m[j][7 - i] = tmp
                 } else if (_rotation == rotation_direction.one_eighty_degree) { // 180 degree
-                    matrix[i][j] = matrix[7 - i][7 - j]
-                    matrix[7 - i][7 - j] = tmp
+                    m[i][j] = matrix[7 - i][7 - j]
+                    m[7 - i][7 - j] = tmp
                     tmp = matrix[7 - j][i]
-                    matrix[7 - j][i] = matrix[j][7 - i]
-                    matrix[j][7 - i] = tmp
+                    m[7 - j][i] = matrix[j][7 - i]
+                    m[j][7 - i] = tmp
                 }
             }
         }
-        return matrix
+        return m
     }
 
     /**
@@ -1139,6 +1140,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
