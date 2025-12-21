@@ -96,27 +96,24 @@ namespace max7219_matrix {
     * (internal function) rotate matrix
     */
     function _rotateMatrix(matrix: number[][]): number[][] {
-        let tmp = 0
         let m = getEmptyMatrix()
         for (let i = 0; i < 4; i++) {
-            for (let j = i; j < 7 - i; j++) {
-                tmp = matrix[i][j]
+            for (let j = i; j < 4 - i; j++) {
                 if (_rotation == rotation_direction.clockwise) { // clockwise
                     m[i][j] = matrix[j][7 - i]
                     m[j][7 - i] = matrix[7 - i][7 - j]
                     m[7 - i][7 - j] = matrix[7 - j][i]
-                    m[7 - j][i] = tmp
+                    m[7 - j][i] = matrix[i][j]
                 } else if (_rotation == rotation_direction.counterclockwise) { // counter-clockwise
                     m[i][j] = matrix[7 - j][i]
                     m[7 - j][i] = matrix[7 - i][7 - j]
                     m[7 - i][7 - j] = matrix[j][7 - i]
-                    m[j][7 - i] = tmp
+                    m[j][7 - i] = matrix[i][j]
                 } else if (_rotation == rotation_direction.one_eighty_degree) { // 180 degree
                     m[i][j] = matrix[7 - i][7 - j]
-                    m[7 - i][7 - j] = tmp
-                    tmp = matrix[7 - j][i]
+                    m[7 - i][7 - j] = matrix[i][j]
                     m[7 - j][i] = matrix[j][7 - i]
-                    m[j][7 - i] = tmp
+                    m[j][7 - i] = matrix[7 - j][i]
                 }
             }
         }
@@ -1140,6 +1137,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
