@@ -520,11 +520,18 @@ namespace max7219_matrix {
         return m
     }
 
+    //% blockId=max7219_matrix__default8x8Pattern
+    //% block=" "
+    //% blockHidden=true
+    //% group="4. Set custom LED pattern on matrixs"
+    export function _default8x8Pattern(): number[][] {
+        return getEmptyMatrix()
+    }
     
     /**
     * Set LEDs of a specific MAX7219s to a pattern from a 8x8 number matrix variable (index 0=farthest on the chain)
     */
-    //% newMatrix.shadow="max7219_matrix_getEmptyMatrix"
+    //% newMatrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Display 8x8 pattern $newMatrix|on matrix index = $index" index.min=0 blockExternalInputs=true group="4. Set custom LED pattern on matrixs"
     export function displayLEDsForOne(newMatrix: number[][], index: number) {
         let columnValue = 0
@@ -1080,6 +1087,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
