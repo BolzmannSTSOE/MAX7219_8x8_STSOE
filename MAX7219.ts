@@ -497,11 +497,17 @@ namespace max7219_matrix {
     //% imageLiteralRows=8
     //% shim=images::createImage
     //% group="4. Set custom LED pattern on matrixs"
-    export function matrix8x8(i: string): number[][] {
+    export function matrix8x8(i: string): Image {
         const im = <Image><any>i;
-        
+        return im
+    }
+
+
+    // Convert an Image to a Matrix
+     //% block="convert image %im to 8x8 pattern"
+     //% group="4. Set custom LED pattern on matrixs"
+    export function imageToMatrix(im: Image): number[][] {
         let m = getEmptyMatrix()
-    
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
                 m[x][y] = im.pixel(7-x, 7-y) ? 1 : 0
@@ -509,7 +515,6 @@ namespace max7219_matrix {
         }
         return m
     }
-
     //% block="write image to Matrix %index %im=variables_get(image)"
     //% index.defl=0 index.min=0 index.max=7 group="4. Set custom LED pattern on matrixs"
     export function writeImage2matrix (index:number, m: number[][]) {
@@ -1075,5 +1080,6 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
 
 
