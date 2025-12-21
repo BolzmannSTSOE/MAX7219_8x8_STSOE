@@ -513,10 +513,10 @@ namespace max7219_matrix {
                  } else {
                  line=(line << 1)  
                 }
-                _registerForOne(_DIGIT[im.height()-1-y], line, _matrixNum-index)
             }
             line=0
         }
+                _registerForOne(_DIGIT[im.height()-1-y], line, _matrixNum-index)
     }
     
     /**
@@ -1076,4 +1076,5 @@ enum rotation_direction {
     counterclockwise = 2,
     //% block="180-degree"
     one_eighty_degree = 3,
+
 }
