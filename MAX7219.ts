@@ -491,7 +491,10 @@ namespace max7219_matrix {
             }
         }
     }
-    //% block=Image 8x8"
+
+
+    
+    //% blockHidden=true
     //% imageLiteral=1
     //% imageLiteralColumns=8
     //% imageLiteralRows=8
@@ -501,12 +504,11 @@ namespace max7219_matrix {
         const im = <Image><any>i;
         return im
     }
-
-
-    // Convert an Image to a Matrix
-     //% block="convert image %im to 8x8 pattern"
-     //% group="4. Set custom LED pattern on matrixs"
-    export function imageToMatrix(im: Image): number[][] {
+    
+    //% block="8x8 pattern %im"
+    //% im.shadow="matrix8x8"
+    //% group="4. Set custom LED pattern on matrixs"
+    export function pattern8x8(im: Image): number[][] {
         let m = getEmptyMatrix()
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
@@ -515,11 +517,7 @@ namespace max7219_matrix {
         }
         return m
     }
-    //% block="write image to Matrix %index %im=variables_get(image)"
-    //% index.defl=0 index.min=0 index.max=7 group="4. Set custom LED pattern on matrixs"
-    export function writeImage2matrix (index:number, m: number[][]) {
-        displayLEDsForOne(m, _matrixNum - index - 1)
-    }
+
     
     /**
     * Set LEDs of a specific MAX7219s to a pattern from a 8x8 number matrix variable (index 0=farthest on the chain)
@@ -1080,6 +1078,7 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
 
 
 
