@@ -1075,13 +1075,6 @@ enum rotation_direction {
     //% block="counter-clockwise"
     counterclockwise = 2,
     //% block="180-degree"
-    one_eighty_degree = 3,
-
+    one_eighty_degree = 3
 }
-
-
-
-
-
-
 
