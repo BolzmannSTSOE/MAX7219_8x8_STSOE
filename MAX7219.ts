@@ -473,6 +473,7 @@ namespace max7219_matrix {
     /**
     * Set LEDs of all MAX7219s to a pattern from a 8x8 matrix variable (index 0=farthest on the chain)
     */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Display 8x8 pattern $newMatrix on all matrixs" group="4. Set custom LED pattern on matrixs" advanced=true
     export function displayLEDsToAll(newMatrix: number[][]) {
         let columnValue = 0
@@ -555,6 +556,7 @@ namespace max7219_matrix {
     /**
     * Return a specific value from a 8x8 number matrix variable
     */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Get value from 8x8 pattern %matrix|x = $x y = $y" x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
     export function getValueFromMatrix(matrix: number[][], x: number, y: number) {
         return matrix[x][y]
@@ -563,6 +565,7 @@ namespace max7219_matrix {
     /**
     * Set a specific value in a 8x8 number matrix variable
     */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Set 8x8 pattern %matrix|x = $x y = $y value to $value" value.min=0 value.max=1 x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true
     export function setValueInMatrix(matrix: number[][], x: number, y: number, value: number) {
         matrix[x][y] = value
@@ -571,6 +574,7 @@ namespace max7219_matrix {
     /**
     * Toggle (between 0/1) a specific value in a 8x8 number matrix variable
     */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
     //% block="Toggle value in 8x8 pattern %matrix|x = $x y = $y" x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
     export function toggleValueInMatrix(matrix: number[][], x: number, y: number) {
         if (matrix[x][y] == 1) matrix[x][y] = 0
@@ -1087,6 +1091,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
