@@ -494,6 +494,7 @@ namespace max7219_matrix {
 
 
     
+    //% block=Image 8x8"
     //% blockHidden=true
     //% imageLiteral=1
     //% imageLiteralColumns=8
@@ -1078,6 +1079,7 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
 
 
 
