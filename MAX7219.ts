@@ -510,7 +510,7 @@ namespace max7219_matrix {
         let m = getEmptyMatrix()
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
-                m[x][y] = im.pixel(7-x, 7-y) ? 1 : 0
+                m[x][y] = im.pixel(x, y) ? 1 : 0
             }
         }
         return m
@@ -1080,6 +1080,7 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
 
 
 
