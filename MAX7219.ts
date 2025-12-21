@@ -471,6 +471,8 @@ namespace max7219_matrix {
         for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], Math.randomRange(0, 255), index)
     }
 
+
+        
     /**
     * Set LEDs of all MAX7219s to a pattern from a 8x8 matrix variable (index 0=farthest on the chain)
     */
@@ -581,6 +583,51 @@ namespace max7219_matrix {
         if (matrix[x][y] == 1) matrix[x][y] = 0
         else if (matrix[x][y] == 0) matrix[x][y] = 1
     }
+    
+    /**
+    * Rotate an 8x8 pattern 
+    */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
+    //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir" rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+    export function rotate8x8Pattern(matrix: number[][], rotationDir: rotation_direction){
+        let m = getEmptyMatrix()
+        if (rotationDir == rotation_direction.clockwise){
+            for (let x=0; x<4; x++){
+                for (let y=0; y<4; y++){
+                    m[7-y][x] = matrix[x][y]
+                    m[7-x][7-y] = matrix[7-y][x]
+                    m[y][7-x] = matrix[7-x][7-y]
+                    m[x][y] = matrix[y][7-x]
+                }
+            }
+        }
+        else if (rotationDir == rotation_direction.counterclockwise){
+            for (let x=0; x<4; x++){
+                for (let y=0; y<4; y++){
+                    m[y][7-x] = matrix[x][y]
+                    m[7-x][7-y] = matrix[y][7-x]
+                    m[7-y][x] = matrix[7-x][7-y]
+                    m[x][y] = matrix[7-y][x]
+                }
+            }
+        }
+        else if (rotationDir == rotation_direction.one_eighty_degree){
+            for (let x=0; x<4; x++){
+                for (let y=0; y<4; y++){
+                    m[7-x][7-y] = matrix[x][y]
+                    m[x][y] = matrix[7-x][7-y]
+                    m[7-y][x] = matrix[y][7-x]
+                    m[y][7-x] = matrix[7-y][x]
+                }
+            }
+        }
+        return m
+    }
+    
+    // //% block="Rotate matrix display $rotation|Reverse printing order $reversed" rotation.defl=rotation_direction.none group="1. Setup" blockExternalInputs=true advanced=true
+    //export function for_4_in_1_modules(rotation: rotation_direction, reversed: boolean) {
+
+    
 
     // ASCII letters borrowed from https://github.com/lyle/matrix-led-font/blob/master/src/index.js
 
@@ -1092,6 +1139,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
