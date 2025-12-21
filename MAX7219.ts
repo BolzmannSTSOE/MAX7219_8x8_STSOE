@@ -505,18 +505,18 @@ namespace max7219_matrix {
     //% block="write image to Matrix %index %im=variables_get(image)"
     //% index.defl=1 index.min=1 index.max=7 group="4. Set custom LED pattern on matrixs"
     export function writeImage2matrix (index:number, im: Image) {
-     let line=0   
-    for (let y = 0; y <= im.height() - 1; y++) {
-        for (let x = 0; x <= im.width() - 1; x++) {
-            if (im.pixel(x, y)) {
-                line=(line << 1) + 1
-                 } else {
-                 line=(line << 1)  
+        let line=0   
+        for (let y = 0; y <= im.height() - 1; y++) {
+            for (let x = 0; x <= im.width() - 1; x++) {
+                if (im.pixel(x, y)) {
+                    line=(line << 1) + 1
+                } else {
+                     line=(line << 1)  
                 }
             }
-            line=0
+                    _registerForOne(_DIGIT[im.height()-1-y], line, _matrixNum-index)
+                line=0
         }
-                _registerForOne(_DIGIT[im.height()-1-y], line, _matrixNum-index)
     }
     
     /**
@@ -1078,3 +1078,4 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
