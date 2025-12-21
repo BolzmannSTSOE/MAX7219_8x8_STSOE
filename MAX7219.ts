@@ -497,26 +497,23 @@ namespace max7219_matrix {
     //% imageLiteralRows=8
     //% shim=images::createImage
     //% group="4. Set custom LED pattern on matrixs"
-    export function matrix8x8(i: string): Image {
+    export function matrix8x8(i: string): number[][] {
         const im = <Image><any>i;
-        return im
+        
+        let m = getEmptyMatrix()
+    
+        for (let x = 0; x < 8; x++) {
+            for (let y = 0; y < 8; y++) {
+                m[x][y] = im.pixel(7-x, 7-y) ? 1 : 0
+            }
+        }
+        return m
     }
 
     //% block="write image to Matrix %index %im=variables_get(image)"
-    //% index.defl=1 index.min=1 index.max=7 group="4. Set custom LED pattern on matrixs"
-    export function writeImage2matrix (index:number, im: Image) {
-        let line=0   
-        for (let y = 0; y <= im.height() - 1; y++) {
-            for (let x = 0; x <= im.width() - 1; x++) {
-                if (im.pixel(x, y)) {
-                    line=(line << 1) + 1
-                } else {
-                     line=(line << 1)  
-                }
-            }
-                    _registerForOne(_DIGIT[im.height()-1-y], line, _matrixNum-index)
-                line=0
-        }
+    //% index.defl=0 index.min=0 index.max=7 group="4. Set custom LED pattern on matrixs"
+    export function writeImage2matrix (index:number, m: number[][]) {
+        displayLEDsForOne(m, _matrixNum - index - 1)
     }
     
     /**
@@ -1078,4 +1075,5 @@ enum rotation_direction {
     one_eighty_degree = 3,
 
 }
+
 
