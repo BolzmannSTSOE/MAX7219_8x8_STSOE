@@ -98,7 +98,7 @@ namespace max7219_matrix {
     function _rotateMatrix(matrix: number[][]): number[][] {
         let m = getEmptyMatrix()
         for (let i = 0; i < 4; i++) {
-            for (let j = i; j < 4 - i; j++) {
+            for (let j = 0; j < 4; j++) {
                 if (_rotation == rotation_direction.clockwise) { // clockwise
                     m[i][j] = matrix[j][7 - i]
                     m[j][7 - i] = matrix[7 - i][7 - j]
@@ -1137,6 +1137,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
