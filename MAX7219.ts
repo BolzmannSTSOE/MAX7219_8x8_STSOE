@@ -246,7 +246,7 @@ namespace max7219_matrix {
         }
         // print characters into array from offset position
         while (currentPosition < _displayArray.length - 8) {
-            currentletterArray = letter_matrix[characters_index[currentChrIndex]]
+            currentLetterArray = letter_matrix[characters_index[currentChrIndex]]
             if (currentLetterArray != null)
                 for (let j = 0; j < currentLetterArray.length; j++)
                     _displayArray[printPosition++] = currentLetterArray[j]
@@ -1092,6 +1092,7 @@ enum rotation_direction {
     //% block="180-degree"
     one_eighty_degree = 3
 }
+
 
 
 
