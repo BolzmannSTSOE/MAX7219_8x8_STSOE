@@ -402,7 +402,7 @@ namespace max7219_matrix {
         let offsetIndex = 0
         clearAll()
         // print all characters on all matrixs
-        for (let i = 1; i < _getGlyphLen(index); i++) {
+        for (let i = 1; i < letter.length; i++) {
             // print two blank spaces to "reset" a matrix
             displayCustomCharacter(_getGlyphColumns(0), offsetIndex * 8, false)
             displayCustomCharacter(_getGlyphColumns(0), offsetIndex * 8 + 4, false)
@@ -1428,6 +1428,7 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
 
 
 
