@@ -96,7 +96,7 @@ pins.digitalWritePin(_pinCS, 1) // LOAD=HIGH, commands take effect
    * (internal function) rotate matrix
    */
 function _rotateMatrix(matrix: number[][]): number[][] {
-if (_rotation == rotation_direction.none) return matrix
+        if (_rotation == rotation_direction.none) return _cloneMatrix(matrix)
 let m = getEmptyMatrix()
 for (let i = 0; i < 4; i++) {
 for (let j = 0; j < 4; j++) {
@@ -121,6 +121,18 @@ m[j][7 - i] = matrix[7 - j][i]
 return m
 }
 
+    /**
+    /* (internal function) Creates a clone matrix, which does not point to the original matrix.
+    */
+    function _cloneMatrix(matrix: number[][]): number[][] {
+        let m = getEmptyMatrix()
+        for (let x = 0; x < 8; x++) {
+            for (let y = 0; y < 8; y++) {
+                m[x][y] = matrix[x][y]
+            }
+        }
+        return m
+    }
 
 /**
    * Return a empty 8x8 number matrix variable
@@ -590,7 +602,7 @@ else if (matrix[x][y] == 0) matrix[x][y] = 1
 //% matrix.shadow="max7219_matrix__default8x8Pattern"
 //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir" rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
 export function rotate8x8Pattern(matrix: number[][], rotationDir: rotation_direction){
-if (rotationDir == rotation_direction.none) return matrix
+        if (rotationDir == rotation_direction.none) return _cloneMatrix(matrix)
 let m = getEmptyMatrix()
 if (rotationDir == rotation_direction.clockwise){
 for (let x=0; x<4; x++){
@@ -625,30 +637,30 @@ m[y][7-x] = matrix[7-y][x]
 return m
 }
 
-/**
-   * Flip an 8x8 pattern horizontally or vertically
-   */
-//% matrix.shadow="max7219_matrix__default8x8Pattern"
-//% block="Flip an 8x8 pattern %matrix|direction %flipDir" flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
-export function flip8x8Pattern(matrix: number[][], flipDir: flip_direction){
-if (flipDir == flip_direction.none) return matrix
-let m = getEmptyMatrix()
-if (flipDir == flip_direction.horizontal){
-for (let x = 0; x < 8; x++){
-for (let y = 0; y < 8; y++){
-m[x][y] = matrix[7-x][y]
-}
-}
-}
-else if (flipDir == flip_direction.vertical){
-for (let x = 0; x < 8; x++){
-for (let y = 0; y < 8; y++){
-m[x][y] = matrix[x][7-y]
-}
-}
-}
-return m
-}
+    /**
+    * Flip an 8x8 pattern horizontally or vertically
+    */
+    //% matrix.shadow="max7219_matrix__default8x8Pattern"
+    //% block="Flip an 8x8 pattern %matrix|direction %flipDir" flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+    export function flip8x8Pattern(matrix: number[][], flipDir: flip_direction){
+        if (flipDir == flip_direction.none) return _cloneMatrix(matrix)
+        let m = getEmptyMatrix()
+        if (flipDir == flip_direction.horizontal){
+            for (let x = 0; x < 8; x++){
+                for (let y = 0; y < 8; y++){
+                    m[x][y] = matrix[7-x][y]
+                }
+            }
+        }
+        else if (flipDir == flip_direction.vertical){
+            for (let x = 0; x < 8; x++){
+                for (let y = 0; y < 8; y++){
+                    m[x][y] = matrix[x][7-y]
+                }
+            }
+        }
+        return m
+    }
 // //% block="Rotate matrix display $rotation|Reverse printing order $reversed" rotation.defl=rotation_direction.none group="1. Setup" blockExternalInputs=true advanced=true
 //export function for_4_in_1_modules(rotation: rotation_direction, reversed: boolean) {
 
@@ -1165,12 +1177,22 @@ counterclockwise = 2,
 one_eighty_degree = 3
 }
 
-enum flip_direction {
-//% block="none"
-none = 0,
-//% block="horizontal"
-horizontal = 1,
-//% block="vertical"
-vertical = 2
-}
 
+
+
+
+
+
+
+
+
+
+
+enum flip_direction {
+    //% block="none"
+    none = 0,
+    //% block="horizontal"
+    horizontal = 1,
+    //% block="vertical"
+    vertical = 2
+}
