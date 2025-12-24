@@ -337,6 +337,7 @@ namespace max7219_matrix {
     /**
     * Return a number array calculated from a 8x8 LED byte array (example: B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000)
     */
+    /*
     //% block="Get custom character number array|from byte-array string $text" text.defl="B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000" group="2. Display text on matrixs" blockExternalInputs=true advanced=true
     export function getCustomCharacterArray(text: string) {
         let tempTextArray: string[] = []
@@ -370,7 +371,7 @@ namespace max7219_matrix {
             return null
         }
     }
-
+*/
     /**
     * Add a custom character from a number array at the end of the extension's letter library.
     * Each number in the array is 0-255, the decimal version of column's byte number.
@@ -719,7 +720,7 @@ namespace max7219_matrix {
     const fontLen: number[] = [
     4, 2, 4, 6, 5, 6, 6, 2, 4, 4, 6, 6, 3, 3, 3, 5, 5, 4, 5, 5, 5, 5, 5, 5, 5, 5, 2, 3, 4, 4, 4, 5, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 6, 6, 5, 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 4, 3, 5, 3, 5, 2, 5, 5, 5, 5, 5, 4, 5, 5, 4, 5, 5, 4, 6, 5, 5, 5, 5, 5, 5, 4, 5, 6, 6, 6, 5, 4, 4, 2, 4, 5, 4
     ]
-    /*
+    
     const fontData = hex`
       00 00 00 00         // " "
       5F 00               // "!"
@@ -824,7 +825,7 @@ namespace max7219_matrix {
       08 04 08 04 00      // "~"
       02 01 02 00         // "^"
     `
-    */
+    /*
     const fontData: number[] = [
       0b00000000, 0b00000000, 0b00000000, 0b00000000                        ,  // " "
       0b01011111, 0b00000000                                                ,  // "!"
@@ -1438,6 +1439,7 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
 
 
 
