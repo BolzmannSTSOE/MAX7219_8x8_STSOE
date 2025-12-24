@@ -42,8 +42,8 @@ namespace max7219_matrix {
             
         // set micro:bit SPI
         pins.spiPins(mosi, miso, sck)
-       // pins.spiFormat(8, 3)
-        pins.spiFormat(8, 0)
+        pins.spiFormat(8, 3)
+        //pins.spiFormat(8, 0)
         pins.spiFrequency(1000000)
         // initialize MAX7219s
         _registerAll(_SHUTDOWN, 0) // turn off
@@ -1546,6 +1546,7 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
 
 
 
