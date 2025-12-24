@@ -33,7 +33,9 @@ namespace max7219_matrix {
         _pinCS = cs
         _matrixNum = num
         // prepare display array (for displaying texts; add extra 8 columns at each side as buffers)
-        for (let i = 0; i < (num + 2) * 8; i++)  _displayArray.push(0)
+        if (_displayArray.length < (num+2)*8) {
+            for (let i = _displayArray.length; i < (num + 2) * 8; i++)  _displayArray.push(0)
+        }
         // set micro:bit SPI
         pins.spiPins(mosi, miso, sck)
         pins.spiFormat(8, 3)
@@ -146,11 +148,12 @@ namespace max7219_matrix {
     function _getMatrixFromColumns(columns: number[]): number[][] {
         let matrix: number[][] = getEmptyMatrix()
         for (let i = 0; i < 8; i++) {
+            let singleCol = columns[i]
             for (let j = 7; j >= 0; j--) {
-                if (columns[i] >= 2 ** j) {
-                    columns[i] -= 2 ** j
+                if (singleCol >= 2 ** j) {
+                    singleCol -= 2 ** j
                     matrix[i][j] = 1
-                } else if (columns[i] == 0) {
+                } else if (singleCol == 0) {
                     break
                 }
             }
@@ -177,7 +180,7 @@ namespace max7219_matrix {
         for (let i = 0; i < text.length; i++) {
             let index = letter.indexOf(text.substr(i, 1))
             if (index >= 0) {
-                //characters_index.push(index)
+                characters_index.push(index)
                 //chrCountdown.push(letter_matrix[index].length)
                 //totalScrollTime += letter_matrix[index].length
                 const w = _getGlyphLen(index)
@@ -247,14 +250,15 @@ namespace max7219_matrix {
             let index = letter.indexOf(text.substr(i, 1))
             if (index >= 0) characters_index.push(index)
         }
+        if (characters_index.length == 0) return
         // print characters into array from offset position
-        while (currentPosition < _displayArray.length - 8) {
+        while (printPosition < _displayArray.length - 8) {
             currentLetterArray = _getGlyphColumns(characters_index[currentChrIndex])
             if (currentLetterArray != null)
                 for (let j = 0; j < currentLetterArray.length; j++)
                     _displayArray[printPosition++] = currentLetterArray[j]
             currentChrIndex += 1
-            if (currentChrIndex == characters_index.length) break
+            if (currentChrIndex >= characters_index.length) break
         }
         // write every 8 columns of display array (visible area) to each MAX7219s
         let matrixCountdown = _matrixNum - 1
@@ -336,7 +340,7 @@ namespace max7219_matrix {
         let currentChr = ""
         let currentNum = 0
         let columnNum = 0
-        if (text != null && text.length >= 0) {
+        if (text != null && text.length > 0) {
             // seperate each byte number to a string
             while (currentIndex < text.length) {
                 tempTextArray.push(text.substr(currentIndex + 1, 8))
@@ -921,7 +925,7 @@ namespace max7219_matrix {
       0b00000010, 0b00000001, 0b00000010, 0b00000000                        ,  // "^"
     ]
     
-    
+    /*
     let letter_matrix = [
         [0b00000000,
             0b00000000,
@@ -1406,6 +1410,7 @@ namespace max7219_matrix {
             0b00000001,
             0b00000010,
             0b00000000]]
+        */
     
 }
 
@@ -1428,6 +1433,7 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
 
 
 
