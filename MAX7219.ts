@@ -337,7 +337,6 @@ namespace max7219_matrix {
     /**
     * Return a number array calculated from a 8x8 LED byte array (example: B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000)
     */
-    /*
     //% block="Get custom character number array|from byte-array string $text" text.defl="B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000" group="2. Display text on matrixs" blockExternalInputs=true advanced=true
     export function getCustomCharacterArray(text: string) {
         let tempTextArray: string[] = []
@@ -371,7 +370,7 @@ namespace max7219_matrix {
             return null
         }
     }
-*/
+
     /**
     * Add a custom character from a number array at the end of the extension's letter library.
     * Each number in the array is 0-255, the decimal version of column's byte number.
@@ -381,6 +380,7 @@ namespace max7219_matrix {
     //% blockExternalInputs=true
     //% group="2. Display text on matrixs"
     //% advanced=true
+    /*
     export function addCustomChr(chr: string, customCharArray: number[]) {
         if (chr != null && chr.length == 1 && customCharArray != null) {
             // add new character
@@ -403,7 +403,7 @@ namespace max7219_matrix {
             }
         }
     }
-
+'/
     /**
     * Display all letters in the extension letter library
     */
@@ -1439,6 +1439,7 @@ enum flip_direction {
     //% block="vertical"
     vertical = 2
 }
+
 
 
 
