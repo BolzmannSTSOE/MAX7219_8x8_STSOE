@@ -22,6 +22,7 @@ let _matrixNum = 1 // number of MAX7219 matrix linked in the chain
 let _displayArray: number[] = [] // display array to show accross all matrixs
 let _rotation = 0 // rotate matrixs display for 4-in-1 modules
 let _reversed = false // reverse matrixs display order for 4-in-1 modules
+let customFontData: number[][] = [] // The array that will contain custom characters, is the user defines some
 
 /**
    * Setup/reset MAX7219s. If you are using 4-in-1 module you'll need to set rotation as true. If your chain are consisted of single modules set it as false (default).
@@ -380,6 +381,16 @@ return null
 //% blockExternalInputs=true
 //% group="2. Display text on matrixs"
 //% advanced=true
+export function addCustomChr(chr: string, customCharArray: number[]) {
+    if (!chr || chr.length !== 1) return
+    if (!customCharArray || customCharArray.length === 0) return
+    if (letter.indexOf(chr) !== -1) return
+
+    letter.push(chr)
+    fontOffs.push(-customFontData.length - 1) // NEGATIVER Index = custom
+    fontLen.push(customCharArray.length)
+    customFontData.push(customCharArray.slice())
+}
 /*
    export function addCustomChr(chr: string, customCharArray: number[]) {
        if (chr != null && chr.length == 1 && customCharArray != null) {
@@ -689,6 +700,24 @@ return fontLen[index] || 0
    * (internal function) Get the coloumn-data of the letter to be written.
    */
 function _getGlyphColumns(index: number): number[] {
+    const off = fontOffs[index]
+    const len = fontLen[index] || 0
+    if (len === 0) return []
+
+    // Custom-Glyph
+    if (off < 0) {
+        return customFontData[-off - 1]
+    }
+
+    // Built-in Glyph
+    const cols: number[] = []
+    for (let i = 0; i < len; i++) {
+        cols.push(fontData[off + i])
+    }
+    return cols
+}
+  /*
+function _getGlyphColumns(index: number): number[] {
 const len = fontLen[index] || 0
 const off = fontOffs[index] || 0
 const cols: number[] = []
@@ -697,7 +726,7 @@ cols.push(fontData[off + i])
 }
 return cols
 }
-
+*/
 
 
 // ASCII letters borrowed from https://github.com/lyle/matrix-led-font/blob/master/src/index.js
@@ -1547,6 +1576,7 @@ horizontal = 1,
 //% block="vertical"
 vertical = 2
 }
+
 
 
 
