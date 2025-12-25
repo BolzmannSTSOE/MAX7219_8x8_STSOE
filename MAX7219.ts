@@ -200,7 +200,7 @@ namespace max7219_matrix {
         const w = _getGlyphLen(index)
         chrCountdown.push(w)
         totalScrollTime += w
-      } else {if (_debugEnabled) scrollText("Error scrollText: Zeichen `" + text.substr(i, 1) + "` nicht gefunden", 75, 500)}
+      } else {if (_debugEnabled) scrollText("Error scrollText: Zeichen nicht gefunden", 75, 500)}
     }
     totalScrollTime += _matrixNum * 8
     // print characters into array and scroll the array
@@ -1764,6 +1764,7 @@ enum flip_direction {
   //% block="vertical"
   vertical = 2
 }
+
 
 
 
