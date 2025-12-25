@@ -578,7 +578,7 @@ namespace max7219_matrix {
   //% block="Set all brightness level $level"
   //% block.loc.de="Helligkeit aller Displays auf $level setzen"
   //% jsdoc.loc.de="Stellt die LED-Helligkeit aller Displays ein (0 = dunkel, 15 = sehr hell). ACHTUNG: Bei einem Helligkeitslevel von 7 oder höher kann es zu Übertragungsfehlern kommen, was zu fehlerhaften Anzeigen auf dem Display führen kann!"
-  //% level.min=0 level.max=15 level.defl=15 group="3. Basic light control"
+  //% level.min=0 level.max=15 level.defl=1 group="3. Basic light control"
   export function brightnessAll(level: number) {
     _registerAll(_INTENSITY, level)
   }
@@ -590,7 +590,7 @@ namespace max7219_matrix {
   //% block="Set brightness level $level on matrix index = $index"
   //% block.loc.de="Helligkeit $level auf dem Display mit Index $index setzen"
   //% jsdoc.loc.de="Stellt die LED-Helligkeit eines einzelnen Displays ein (0 = dunkel, 15 = sehr hell). Index 0 ist am weitesten in der Kette entfernt. ACHTUNG: Bei einem Helligkeitslevel von 7 oder höher kann es zu Übertragungsfehlern kommen, was zu fehlerhaften Anzeigen auf dem Display führen kann!"
-  //% level.min=0 level.max=15 level.defl=15 index.min=0 group="3. Basic light control" advanced=true
+  //% level.min=0 level.max=15 level.defl=1 index.min=0 group="3. Basic light control" advanced=true
   export function brightnessForOne(level: number, index: number) {
     _registerForOne(_INTENSITY, level, index)
   }
@@ -1219,6 +1219,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
