@@ -34,7 +34,7 @@ namespace max7219_matrix {
    */
   //% block="Setup MAX7219:|Number of matrixs $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(not used) = $miso|SCK(CLK) = $sck"
   //% block.loc.de="MAX7219 einrichten:|Anzahl 8x8-Displays $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(ungenuzt) = $miso|SCK(CLK) = $sck"
-  //% jsdoc.loc.de="Richtet die MAX7219-Matrixmodule ein, setzt sie zurück und initialisiert SPI. Vor allen anderen Blöcken genau einmal aufrufen."
+  //% jsdoc.loc.de="Richtet die MAX7219-Matrixmodule ein, setzt sie zurück und initialisiert SPI. MUSS VOR allen anderen Blöcken genau einmal aufgerufen werden."
   //% num.min=1 num.defl=1 cs.defl=DigitalPin.C16 mosi.defl=DigitalPin.C17 miso.defl=DigitalPin.P1 sck.defl=DigitalPin.P0 group="1. Setup"
   export function setup(num: number, cs: DigitalPin, mosi: DigitalPin, miso: DigitalPin, sck: DigitalPin) {
     // set internal variables        
@@ -574,7 +574,7 @@ namespace max7219_matrix {
    * Set brightness level of LEDs on a specific MAX7219s (index 0=farthest on the chain)
    */
   //% block="Set brightness level $level on matrix index = $index"
-  //% block.loc.de="Helligkeit $level auf Matrix mit Index $index setzen"
+  //% block.loc.de="Helligkeit $level auf dem Display mit Index $index setzen"
   //% jsdoc.loc.de="Stellt die LED-Helligkeit eines einzelnen Displays ein. Index 0 ist am weitesten in der Kette entfernt."
   //% level.min=0 level.max=15 level.defl=15 index.min=0 group="3. Basic light control" advanced=true
   export function brightnessForOne(level: number, index: number) {
@@ -812,7 +812,7 @@ namespace max7219_matrix {
    */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Shift an 8x8 pattern %matrix|Offset left-right %offsetLR|Offset up-down %offsetUD"
-  //% block.loc.de="8x8-Muster %matrix verschieben|Offset links-rechts %offsetLR|Offset hoch-runter %offsetUD"
+  //% block.loc.de="Verschiebe 8x8-Muster %matrix|Offset links-rechts %offsetLR|Offset hoch-runter %offsetUD"
   //% jsdoc.loc.de="Verschiebt ein 8x8-Muster horizontal und vertikal um die angegebenen Offsets."
   //% offsetLR.defl=0 offsetUD.defl=0
   //% group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
@@ -839,7 +839,7 @@ namespace max7219_matrix {
    */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir"
-  //% block.loc.de="8x8-Muster %matrix drehen|Richtung %rotationDir"
+  //% block.loc.de="Drehe 8x8-Muster %matrix|Richtung %rotationDir"
   //% jsdoc.loc.de="Dreht ein 8x8-Muster im Uhrzeigersinn, gegen den Uhrzeigersinn oder um 180°."
   //% rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function rotate8x8Pattern(matrix: number[][], rotationDir: rotation_direction) {
@@ -883,7 +883,7 @@ namespace max7219_matrix {
    */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Flip an 8x8 pattern %matrix|direction %flipDir"
-  //% block.loc.de="8x8-Muster %matrix spiegeln|Richtung %flipDir"
+  //% block.loc.de="Spiegle 8x8-Muster %matrix|Richtung %flipDir"
   //% jsdoc.loc.de="Spiegelt ein 8x8-Muster horizontal oder vertikal."
   //% flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function flip8x8Pattern(matrix: number[][], flipDir: flip_direction) {
@@ -1205,3 +1205,4 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
