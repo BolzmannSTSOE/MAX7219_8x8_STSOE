@@ -795,7 +795,7 @@ namespace max7219_matrix {
    */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Invert an 8x8 pattern %matrix"
-  //% block.loc.de="8x8-Muster %matrix invertieren"
+  //% block.loc.de="Invertiere 8x8-Muster %matrix"
   //% jsdoc.loc.de="Erzeugt ein neues 8x8-Muster, in dem alle 0/1-Werte vertauscht sind."
   //% group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function invert8x8Pattern(matrix: number[][]) {
@@ -1219,6 +1219,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
