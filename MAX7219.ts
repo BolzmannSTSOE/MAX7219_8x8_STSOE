@@ -3,10 +3,14 @@
 * by Alan Wang https://github.com/alankrantas/pxt-MAX7219_8x8
 * changed for Calliope mini by r00b1nh00d
 * deutsche Umlaute und Imageblock by M. Klein 2021
+* New functions added: rotating, flipping and shifting pattern AND ...
+* replaced 'letter_matrix' by a less RAM using methode AND ...
+* added German tooltips and block descriptions by A. Bolzmann 2025
 */
 
 //% weight=100 color=#006d19 icon="\uf00a" block="MAX7219 8x8"
-//% groups=['1. Setup', '2. Display text on matrixs', '3. Basic light control', '4. Set custom LED pattern on matrixs']
+//% groups='["1. Setup", "2. Display text on matrixs", "3. Basic light control", "4. Set custom LED pattern on matrixs"]'
+//% groups.loc.de='["1. Setup", "2. Text auf Matrizen anzeigen", "3. Grundlegende Lichtsteuerung", "4. Eigene 8x8 Muster"]'
 namespace max7219_matrix {
 
   //Registers (command) for MAX7219
@@ -26,9 +30,11 @@ namespace max7219_matrix {
   let _debugEnabled = false // In debug mode, error messages will be printed on the MAX7219
 
   /**
-     * Setup/reset MAX7219s. If you are using 4-in-1 module you'll need to set rotation as true. If your chain are consisted of single modules set it as false (default).
-     */
+   * Setup/reset MAX7219s. If you are using 4-in-1 module you'll need to set rotation as true. If your chain are consisted of single modules set it as false (default).
+   */
   //% block="Setup MAX7219:|Number of matrixs $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(not used) = $miso|SCK(CLK) = $sck"
+  //% block.loc.de="MAX7219 einrichten:|Anzahl 8x8-Displays $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(ungenuzt) = $miso|SCK(CLK) = $sck"
+  //% jsdoc.loc.de="Richtet die MAX7219-Matrixmodule ein, setzt sie zurück und initialisiert SPI. Vor allen anderen Blöcken genau einmal aufrufen."
   //% num.min=1 num.defl=1 cs.defl=DigitalPin.C16 mosi.defl=DigitalPin.C17 miso.defl=DigitalPin.P1 sck.defl=DigitalPin.P0 group="1. Setup"
   export function setup(num: number, cs: DigitalPin, mosi: DigitalPin, miso: DigitalPin, sck: DigitalPin) {
     // set internal variables        
@@ -57,7 +63,12 @@ namespace max7219_matrix {
     clearAll() // clear screen on all MAX7219s
   }
   
+  /**
+   * Enable or disable debug output on the MAX7219 display.
+   */
   //% block="MAX Debug %on"
+  //% block.loc.de="MAX Debug %on"
+  //% jsdoc.loc.de="Schaltet Debug-Meldungen auf der MAX7219-Anzeige ein oder aus. Meldungen werden als Lauftext ausgegeben."
   //% on.defl=true
   //% group="1. Setup" advanced=true
   export function setDebug(on: boolean) {
@@ -65,17 +76,20 @@ namespace max7219_matrix {
   }
 
   /**
-     * Rotation/reverse order options for 4-in-1 MAX7219 modules
-     */
-  //% block="Rotate matrix display $rotation|Reverse printing order $reversed" rotation.defl=rotation_direction.none group="1. Setup" blockExternalInputs=true advanced=true
+   * Rotation/reverse order options for 4-in-1 MAX7219 modules
+   */
+  //% block="Rotate matrix display $rotation|Reverse printing order $reversed"
+  //% block.loc.de="Rotation der Anzeige $rotation|Reihenfolge der Displays umkehren $reversed"
+  //% jsdoc.loc.de="Konfiguriert Rotation und umgekehrte Reihenfolge für einzelne oder mehrere 8x8-Displays z.B. für 4-in-1-MAX7219-Module."
+  //% rotation.defl=rotation_direction.none group="1. Setup" blockExternalInputs=true advanced=true
   export function for_4_in_1_modules(rotation: rotation_direction, reversed: boolean) {
     _rotation = rotation
     _reversed = reversed
   }
 
   /**
-     * (internal function) write command and data to all MAX7219s
-     */
+   * (internal function) write command and data to all MAX7219s
+   */
   function _registerAll(addressCode: number, data: number) {
     pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
     for (let i = 0; i < _matrixNum; i++) {
@@ -88,8 +102,8 @@ namespace max7219_matrix {
   }
 
   /**
-     * (internal function) write command and data to a specific MAX7219 (index 0=farthest on the chain)
-     */
+   * (internal function) write command and data to a specific MAX7219 (index 0=farthest on the chain)
+   */
   function _registerForOne(addressCode: number, data: number, matrixIndex: number) {
     if (matrixIndex <= _matrixNum - 1) {
       pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
@@ -109,8 +123,8 @@ namespace max7219_matrix {
   }
 
   /**
-     * (internal function) rotate matrix
-     */
+   * (internal function) rotate matrix
+   */
   function _rotateMatrix(matrix: number[][]): number[][] {
     if (_rotation == rotation_direction.none) return matrix
     let m = getEmptyMatrix()
@@ -139,10 +153,13 @@ namespace max7219_matrix {
 
 
   /**
-     * Return a empty 8x8 number matrix variable
-     */
+   * Return a empty 8x8 number matrix variable
+   */
   //% blockId=max7219_matrix_getEmptyMatrix
-  //% block="Empty 8x8 pattern" group="4. Set custom LED pattern on matrixs"
+  //% block="Empty 8x8 pattern"
+  //% block.loc.de="Leeres 8x8-Muster"
+  //% jsdoc.loc.de="Erzeugt ein leeres 8x8-Muster (alle LEDs aus) als Zahlentabelle."
+  //% group="4. Set custom LED pattern on matrixs"
   export function getEmptyMatrix() {
     return [
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -157,8 +174,8 @@ namespace max7219_matrix {
   }
 
   /**
-     * (internal function) get 8x8 matrix from a column array
-     */
+   * (internal function) get 8x8 matrix from a column array
+   */
   function _getMatrixFromColumns(columns: number[]): number[][] {
     let matrix: number[][] = getEmptyMatrix()
     for (let i = 0; i < 8; i++) {
@@ -176,9 +193,12 @@ namespace max7219_matrix {
   }
 
   /**
-     * Scroll a text accross all MAX7219 matrixs for once
-     */
-  //% block="Scroll text $text|delay (ms) $delay|at the end wait (ms) $endDelay" text.defl="Hello world!" delay.min=0 delay.defl=75 endDelay.min=0 endDelay.defl=500 group="2. Display text on matrixs" blockExternalInputs=true
+   * Scroll a text accross all MAX7219 matrixs for once
+   */
+  //% block="Scroll text $text|delay (ms) $delay|at the end wait (ms) $endDelay"
+  //% block.loc.de="Lauftext $text|Verzögerung (ms) $delay|Pause am Ende (ms) $endDelay"
+  //% jsdoc.loc.de="Lässt einen Text einmal von rechts nach links über alle Displays laufen."
+  //% text.defl="Hello world!" delay.min=0 delay.defl=75 endDelay.min=0 endDelay.defl=500 group="2. Display text on matrixs" blockExternalInputs=true
   export function scrollText(text: string, delay: number, endDelay: number) {
     let printPosition = _displayArray.length - 8
     let characters_index: number[] = []
@@ -195,8 +215,6 @@ namespace max7219_matrix {
       let index = letter.indexOf(text.substr(i, 1))
       if (index >= 0) {
         characters_index.push(index)
-        //chrCountdown.push(letter_matrix[index].length)
-        //totalScrollTime += letter_matrix[index].length
         const w = _getGlyphLen(index)
         chrCountdown.push(w)
         totalScrollTime += w
@@ -245,9 +263,12 @@ namespace max7219_matrix {
   }
 
   /**
-     * Print a text accross the chain of MAX7219 matrixs at a specific spot. Offset value -8 ~ last column of matrixs. You can choose to clear the screen or not (if not it can be used to print multiple string on the MAX7219 chain).
-     */
-  //% block="Display text (align left) $text|offset $offset|clear screen first $clear" text.defl="Hi!" offset.min=-8 clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true
+   * Print a text accross the chain of MAX7219 matrixs at a specific spot. Offset value -8 ~ last column of matrixs. You can choose to clear the screen or not (if not it can be used to print multiple string on the MAX7219 chain).
+   */
+  //% block="Display text (align left) $text|offset $offset|clear screen first $clear"
+  //% block.loc.de="Text anzeigen (linksbündig) $text|Verschiebung $offset|Bildschirm vorher löschen $clear"
+  //% jsdoc.loc.de="Zeigt einen Text (linksbündig) mit einer bestimmten Verschiebung an. Die minimale Verschiebung beträgt -8 (= 8 Spalten nach links). Optional wird der Bildschirm davor gelöscht."
+  //% text.defl="Hi!" offset.min=-8 clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true
   export function displayText(text: string, offset: number, clear: boolean) {
     // clear screen and array if needed
     if (clear) {
@@ -297,9 +318,12 @@ namespace max7219_matrix {
   }
 
   /**
-     * Print a text on the chain of MAX7219 matrixs and automatically align to the right.
-     */
-  //% block="Display text (align right) $text|clear screen first $clear" text.defl="Hi!" clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true
+   * Print a text on the chain of MAX7219 matrixs and automatically align to the right.
+   */
+  //% block="Display text (align right) $text|clear screen first $clear"
+  //% block.loc.de="Text anzeigen (rechtsbündig) $text|Bildschirm vorher löschen $clear"
+  //% jsdoc.loc.de="Zeigt einen Text über alle Displays rechtsbündig an. Optional wird der Bildschirm davor gelöscht."
+  //% text.defl="Hi!" clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true
   export function displayTextAlignRight(text: string, clear: boolean) {
     let len = 0
     for (let i = 0; i < text.length; i++) {
@@ -310,9 +334,12 @@ namespace max7219_matrix {
   }
 
   /**
-     * Print a custom character from a number array on the chain of MAX7219 matrixs at a specific spot. Each number in the array is 0-255, the decimal version of column's byte number. Offset value -8 ~ last column of matrixs. You can choose to clear the screen or not (if not it can be used to print multiple string on the MAX7219 chain).
-     */
-  //% block="Display custom character from|number array $customCharArray|offset $offset|clear screen first $clear" offset.min=-8 clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true advanced=true
+   * Print a custom character from a number array on the chain of MAX7219 matrixs at a specific spot. Each number in the array is 0-255, the decimal version of column's byte number. Offset value -8 ~ last column of matrixs. You can choose to clear the screen or not (if not it can be used to print multiple string on the MAX7219 chain).
+   */
+  //% block="Display custom character from|number array $customCharArray|offset $offset|clear screen first $clear"
+  //% block.loc.de="Benutzerdefiniertes Zeichen anzeigen aus|Zahlenarray $customCharArray|Verschiebung $offset|Bildschirm vorher löschen $clear"
+  //% jsdoc.loc.de="Zeigt ein benutzerdefiniertes Zeichen aus einer Spalten-Zahlenliste an. Minimale Verschiebung beträgt -8. Optional mit vorherigem Löschen des Bildschirms."
+  //% offset.min=-8 clear.defl=true group="2. Display text on matrixs" blockExternalInputs=true advanced=true
   export function displayCustomCharacter(customCharArray: number[], offset: number, clear: boolean) {
     // clear screen and array if needed
     if (clear) {
@@ -346,7 +373,7 @@ namespace max7219_matrix {
   }
 
 
-    /**
+  /**
    * (internal) Parse an integer string in a given base (2, 10, 16).
    * Returns -1 on error.
    */
@@ -409,8 +436,6 @@ namespace max7219_matrix {
     // Prüfen, ob die Ziffern zum gewählten Zahlensystem passen
     if (!digitPart || digitPart.length == 0) return -1
 
-    // Hier reicht es, wenn _parseIntegerWithBase die Ziffern nochmals prüft.
-    // Doppelte Logik vermeiden wir, indem wir nur dort validieren.
     const value = _parseIntegerWithBase(digitPart, base)
     if (value < 0 || value > 255) return -1
 
@@ -426,6 +451,8 @@ namespace max7219_matrix {
    * - Bei Formatfehlern wird im Debug-Mode eine Fehlermeldung gescrollt.
    */
   //% block="Get custom character number array|from byte-array string $text"
+  //% block.loc.de="Zeichen-Array aus Byte-Text erzeugen|$text"
+  //% jsdoc.loc.de="Wandelt eine kommagetrennte Byte-Liste (Binär, Hex oder Dezimal) in ein Zahlen-Array für ein benutzerdefiniertes Zeichen um. Beispiele für Byte-Formate: 0b01001100, 0xA7, 127. Im Debug-Mode werden Fehler auf dem Display angezeigt."
   //% text.defl="0b00100000,0b01000000,0b10000110,0b10000000,0b10000000,0b10000110,0b01000000,0b00100000"
   //% group="2. Display text on matrixs" blockExternalInputs=true advanced=true
   export function getCustomCharacterArray(text: string) {
@@ -440,7 +467,7 @@ namespace max7219_matrix {
     for (let i = 0; i < tokenList.length; i++) {
       const token = tokenList[i].trim()
       if (token.length == 0) {
-        // Leere Einträge (z.B. ", ,") ignorieren wir einfach
+        // Empty inputs are ignored, eg ", , "
         continue
       }
 
@@ -463,53 +490,13 @@ namespace max7219_matrix {
     return resultNumberArray
   }
 
-
-
-  
   /**
-     * Return a number array calculated from a 8x8 LED byte array (example: B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000)
-     */
-  /*
-  //% block="Get custom character number array|from byte-array string $text" text.defl="B00100000,B01000000,B10000110,B10000000,B10000000,B10000110,B01000000,B00100000" group="2. Display text on matrixs" blockExternalInputs=true advanced=true
-  export function getCustomCharacterArray(text: string) {
-    let tempTextArray: string[] = []
-    let resultNumberArray: number[] = []
-    let currentIndex = 0
-    let currentChr = ""
-    let currentNum = 0
-    let columnNum = 0
-    if (text != null && text.length > 0) {
-      // seperate each byte number to a string
-      while (currentIndex < text.length) {
-        tempTextArray.push(text.substr(currentIndex + 1, 8))
-        currentIndex += 10
-      }
-      for (let i = 0; i < tempTextArray.length; i++) {
-        columnNum = 0
-        // read each bit and calculate the decimal sum
-        for (let j = tempTextArray[i].length - 1; j >= 0; j--) {
-          currentChr = tempTextArray[i].substr(j, 1)
-          if (currentChr == "1" || currentChr == "0")
-            currentNum = parseInt(currentChr)
-          else
-            currentNum = 0
-          columnNum += (2 ** (tempTextArray[i].length - j - 1)) * currentNum
-        }
-        // generate new decimal array
-        resultNumberArray.push(columnNum)
-      }
-      return resultNumberArray
-    } else {
-      return null
-    }
-  }
-  */
-
-  /**
-     * Add a custom character from a number array at the end of the extension's letter library.
-     * Each number in the array is 0-255, the decimal version of column's byte number.
-     */
-  //% block="Add custom character $chr|number array $customCharArray|to the extension letter library"
+   * Add a custom character from a number array to the internal letter library.
+   * Each number in the array is 0-255, the decimal version of column's byte number.
+   */
+  //% block="Add custom character $chr|number array $customCharArray|to the internal letter library"
+  //% block.loc.de="Benutzerdefiniertes Zeichen $chr|mit Zahlenarray $customCharArray|zur Zeichenliste hinzufügen"
+  //% jsdoc.loc.de="Fügt der internen Zeichenliste ein neues Zeichen hinzu. Die Einträge im Array sind Spaltenwerte von 0 bis 255."
   //% chr.defl=""
   //% blockExternalInputs=true
   //% group="2. Display text on matrixs"
@@ -529,40 +516,19 @@ namespace max7219_matrix {
       return
     }
 
-
     letter.push(chr)
     fontOffs.push(-customFontData.length - 1) // NEGATIVER Index = custom
     fontLen.push(customCharArray.length)
     customFontData.push(customCharArray.slice())
   }
-  /*
-     export function addCustomChr(chr: string, customCharArray: number[]) {
-         if (chr != null && chr.length == 1 && customCharArray != null) {
-             // add new character
-             //letter.push(chr)
-             //letter_matrix.push(customCharArray)
-             if (!chr || chr.length != 1 || !customCharArray) return
-  
-             // 1. Zeichen registrieren
-             letter.push(chr)
-         
-             // 2. Offset = aktuelles Ende von fontData
-             fontOffs.push(fontData.length)
-         
-             // 3. Länge speichern
-             fontLen.push(customCharArray.length)
-         
-             // 4. Glyph-Daten anhängen
-             for (let i = 0; i < customCharArray.length; i++) {
-                 fontData.push(customCharArray[i] & 0xFF)
-             }
-         }
-     }
-  */
+
   /**
-  * Display all letters in the extension letter library
-  */
-  //% block="Display all letters at delay $delay" delay.min=0 delay.defl=200 group="2. Display text on matrixs" advanced=true
+   * Display all letters in the extension letter library
+   */
+  //% block="Display all letters at delay $delay"
+  //% block.loc.de="Alle bekannten Zeichen mit Verzögerung $delay (ms) anzeigen"
+  //% jsdoc.loc.de="Zeigt nacheinander alle Zeichen der Zeichenliste auf dem Display an."
+  //% delay.min=0 delay.defl=200 group="2. Display text on matrixs" advanced=true
   export function letterDemo(delay: number) {
     let offsetIndex = 0
     clearAll()
@@ -582,74 +548,101 @@ namespace max7219_matrix {
   }
 
   /**
-     * Turn on or off all MAX7219s
-     */
-  //% block="Turn on all matrixs $status" status.defl=true group="3. Basic light control" advanced=true
+   * Turn on or off all MAX7219s
+   */
+  //% block="Turn on all matrixs $status"
+  //% block.loc.de="Alle Matrizen ein-(aus-)schalten $status"
+  //% jsdoc.loc.de="Schaltet alle MAX7219-Displays ein oder aus (Power-Down)."
+  //% status.defl=true group="3. Basic light control" advanced=true
   export function togglePower(status: boolean) {
     if (status) _registerAll(_SHUTDOWN, 1)
     else _registerAll(_SHUTDOWN, 0)
   }
 
   /**
-     * Set brightness level of LEDs on all MAX7219s
-     */
-  //% block="Set all brightness level $level" level.min=0 level.max=15 level.defl=15 group="3. Basic light control"
+   * Set brightness level of LEDs on all MAX7219s
+   */
+  //% block="Set all brightness level $level"
+  //% block.loc.de="Helligkeit aller Displays auf $level setzen"
+  //% jsdoc.loc.de="Stellt die LED-Helligkeit aller Matrizen ein (0 = dunkel, 15 = sehr hell)."
+  //% level.min=0 level.max=15 level.defl=15 group="3. Basic light control"
   export function brightnessAll(level: number) {
     _registerAll(_INTENSITY, level)
   }
 
   /**
-     * Set brightness level of LEDs on a specific MAX7219s (index 0=farthest on the chain)
-     */
-  //% block="Set brightness level $level on matrix index = $index" level.min=0 level.max=15 level.defl=15 index.min=0 group="3. Basic light control" advanced=true
+   * Set brightness level of LEDs on a specific MAX7219s (index 0=farthest on the chain)
+   */
+  //% block="Set brightness level $level on matrix index = $index"
+  //% block.loc.de="Helligkeit $level auf Matrix mit Index $index setzen"
+  //% jsdoc.loc.de="Stellt die LED-Helligkeit eines einzelnen Displays ein. Index 0 ist am weitesten in der Kette entfernt."
+  //% level.min=0 level.max=15 level.defl=15 index.min=0 group="3. Basic light control" advanced=true
   export function brightnessForOne(level: number, index: number) {
     _registerForOne(_INTENSITY, level, index)
   }
 
   /**
-     * Turn on all LEDs on all MAX7219s
-     */
-  //% block="Fill all LEDs" group="3. Basic light control"
+   * Turn on all LEDs on all MAX7219s
+   */
+  //% block="Fill all LEDs"
+  //% block.loc.de="Alle LEDs einschalten"
+  //% jsdoc.loc.de="Schaltet auf allen Displays alle LEDs ein."
+  //% group="3. Basic light control"
   export function fillAll() {
     for (let i = 0; i < 8; i++) _registerAll(_DIGIT[i], 255)
   }
 
   /**
-     * Turn on LEDs on a specific MAX7219
-     */
-  //% block="Fill LEDs on matrix index = $index" index.min=0 group="3. Basic light control" advanced=true
+   * Turn on LEDs on a specific MAX7219
+   */
+  //% block="Fill LEDs on matrix index = $index"
+  //% block.loc.de="Alle LEDs auf dem Display mit Index $index einschalten"
+  //% jsdoc.loc.de="Schaltet auf einem einzelnen Display alle LEDs ein."
+  //% index.min=0 group="3. Basic light control" advanced=true
   export function fillForOne(index: number) {
     for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], 255, index)
   }
 
   /**
-     * Turn off LEDs on all MAX7219s
-     */
-  //% block="Clear all LEDs" group="3. Basic light control"
+   * Turn off LEDs on all MAX7219s
+   */
+  //% block="Clear all LEDs"
+  //% block.loc.de="Alle LEDs löschen"
+  //% jsdoc.loc.de="Schaltet auf allen Displays alle LEDs aus."
+  //% group="3. Basic light control"
   export function clearAll() {
     for (let i = 0; i < 8; i++) _registerAll(_DIGIT[i], 0)
   }
 
   /**
-     * Turn off LEDs on a specific MAX7219 (index 0=farthest on the chain)
-     */
-  //% block="Clear LEDs on matrix index = $index" index.min=0 group="3. Basic light control" advanced=true
+   * Turn off LEDs on a specific MAX7219 (index 0=farthest on the chain)
+   */
+  //% block="Clear LEDs on matrix index = $index"
+  //% block.loc.de="LEDs auf dem Display mit Index $index löschen"
+  //% jsdoc.loc.de="Schaltet auf einem einzelnen Display alle LEDs aus."
+  //% index.min=0 group="3. Basic light control" advanced=true
   export function clearForOne(index: number) {
     for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], 0, index)
   }
 
   /**
-     * Turn on LEDs randomly on all MAX7219s
-     */
-  //% block="Randomize all LEDs" group="3. Basic light control"
+   * Turn on LEDs randomly on all MAX7219s
+   */
+  //% block="Randomize all LEDs"
+  //% block.loc.de="LEDs auf allen Displays zufällig einschalten"
+  //% jsdoc.loc.de="Schaltet auf allen Displays zufällig verteilte LEDs ein."
+  //% group="3. Basic light control"
   export function randomizeAll() {
     for (let i = 0; i < 8; i++) _registerAll(_DIGIT[i], Math.randomRange(0, 255))
   }
 
   /**
-     * Turn on LEDs randomly on a specific MAX7219 (index 0=farthest on the chain)
-     */
-  //% block="Randomize LEDs on matrix index = $index" index.min=0 group="3. Basic light control" advanced=true
+   * Turn on LEDs randomly on a specific MAX7219 (index 0=farthest on the chain)
+   */
+  //% block="Randomize LEDs on matrix index = $index"
+  //% block.loc.de="LEDs zufällig auf dem Display mit Index $index einschalten"
+  //% jsdoc.loc.de="Schaltet auf einem einzelnen Display zufällig verteilte LEDs ein."
+  //% index.min=0 group="3. Basic light control" advanced=true
   export function randomizeForOne(index: number) {
     for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], Math.randomRange(0, 255), index)
   }
@@ -657,10 +650,13 @@ namespace max7219_matrix {
 
 
   /**
-     * Set LEDs of all MAX7219s to a pattern from a 8x8 matrix variable (index 0=farthest on the chain)
-     */
+   * Set LEDs of all MAX7219s to a pattern from a 8x8 matrix variable (index 0=farthest on the chain)
+   */
   //% newMatrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Display 8x8 pattern $newMatrix on all matrixs" group="4. Set custom LED pattern on matrixs" advanced=true
+  //% block="Display 8x8 pattern $newMatrix on all matrixs"
+  //% block.loc.de="8x8-Muster $newMatrix auf allen Displays anzeigen"
+  //% jsdoc.loc.de="Zeigt dasselbe 8x8-Muster auf allen Displays an."
+  //% group="4. Set custom LED pattern on matrixs" advanced=true
   export function displayLEDsToAll(newMatrix: number[][]) {
     let columnValue = 0
     if (newMatrix != null) {
@@ -680,9 +676,13 @@ namespace max7219_matrix {
     }
   }
 
-
+  /**
+   * Create an 8x8-Image, that can be converted to a matrix pattern.
+   */
   //% blockId=max7219_matrix_matrix8x8
   //% block="Image 8x8"
+  //% block.loc.de="Bild 8x8"
+  //% jsdoc.loc.de="Erzeugt ein 8x8-Bild, das in ein Muster umgewandelt werden kann."
   //% blockHidden=true
   //% imageLiteral=1
   //% imageLiteralColumns=8
@@ -694,7 +694,12 @@ namespace max7219_matrix {
     return im
   }
 
+  /**
+  * Converts an 8x8-Image into a matrix pattern, containing 0 and 1.
+  */
   //% block="8x8 pattern %im"
+  //% block.loc.de="8x8-Muster aus Bild %im"
+  //% jsdoc.loc.de="Wandelt ein 8x8-Bild in ein 8x8-Muster aus 0 und 1 um."
   //% im.shadow="max7219_matrix_matrix8x8"   
   //% group="4. Set custom LED pattern on matrixs"
   export function pattern8x8(im: Image): number[][] {
@@ -707,8 +712,13 @@ namespace max7219_matrix {
     return m
   }
 
+  /**
+  * Internal empty pattern.
+  */
   //% blockId=max7219_matrix__default8x8Pattern
   //% block=" "
+  //% block.loc.de=" "
+  //% jsdoc.loc.de="Internes Platzhalter-Muster (leer)."
   //% blockHidden=true
   //% group="4. Set custom LED pattern on matrixs"
   export function _default8x8Pattern(): number[][] {
@@ -716,10 +726,13 @@ namespace max7219_matrix {
   }
 
   /**
-     * Set LEDs of a specific MAX7219s to a pattern from a 8x8 number matrix variable (index 0=farthest on the chain)
-     */
+   * Set LEDs of a specific MAX7219s to a pattern from a 8x8 number matrix variable (index 0=farthest on the chain)
+   */
   //% newMatrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Display 8x8 pattern $newMatrix|on matrix index = $index" index.min=0 blockExternalInputs=true group="4. Set custom LED pattern on matrixs"
+  //% block="Display 8x8 pattern $newMatrix|on matrix index = $index"
+  //% block.loc.de="8x8-Muster $newMatrix|auf Display mit Index $index anzeigen"
+  //% jsdoc.loc.de="Zeigt ein 8x8-Muster auf genau einem Display an."
+  //% index.min=0 blockExternalInputs=true group="4. Set custom LED pattern on matrixs"
   export function displayLEDsForOne(newMatrix: number[][], index: number) {
     let columnValue = 0
     if (newMatrix != null) {
@@ -740,28 +753,36 @@ namespace max7219_matrix {
   }
 
   /**
-     * Return a specific value from a 8x8 number matrix variable
-     */
+   * Return a specific value from a 8x8 number matrix pattern
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Get value from 8x8 pattern %matrix|x = $x y = $y" x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+  //% block="Get value from 8x8 pattern %matrix|x = $x y = $y"
+  //% block.loc.de="Wert des 8x8-Musters %matrix|x = $x y = $y auslesen"
+  //% jsdoc.loc.de="Liest den Wert an Position (x,y) eines 8x8-Muster aus."
+  //% x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function getValueFromMatrix(matrix: number[][], x: number, y: number) {
     return matrix[x][y]
   }
 
   /**
-     * Set a specific value in a 8x8 number matrix variable
-     */
+   * Set a specific value in a 8x8 number matrix variable
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Set 8x8 pattern %matrix|x = $x y = $y value to $value" value.min=0 value.max=1 x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true
+  //% block="Set 8x8 pattern %matrix|x = $x y = $y value to $value"
+  //% block.loc.de="Im 8x8-Muster %matrix|x = $x y = $y auf $value setzen"
+  //% jsdoc.loc.de="Setzt den Wert an Position (x,y) in einem 8x8-Muster auf 0 oder 1."
+  //% value.min=0 value.max=1 x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true
   export function setValueInMatrix(matrix: number[][], x: number, y: number, value: number) {
     matrix[x][y] = value
   }
 
   /**
-     * Invert an 8x8 pattern - toggle each LED
-     */
+   * Invert an 8x8 pattern - toggle each LED
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Invert an 8x8 pattern %matrix"
+  //% block.loc.de="8x8-Muster %matrix invertieren"
+  //% jsdoc.loc.de="Erzeugt ein neues 8x8-Muster, in dem alle 0/1-Werte vertauscht sind."
   //% group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function invert8x8Pattern(matrix: number[][]) {
     let m = getEmptyMatrix()
@@ -774,20 +795,25 @@ namespace max7219_matrix {
   }
 
   /**
-     * Toggle (between 0/1) a specific value in a 8x8 number matrix variable
-     */
+   * Toggle (between 0/1) a specific value in a 8x8 number matrix variable
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Toggle value in 8x8 pattern %matrix|x = $x y = $y" x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+  //% block="Toggle value in 8x8 pattern %matrix|x = $x y = $y"
+  //% block.loc.de="Wert im 8x8-Muster %matrix|bei x = $x y = $y umschalten"
+  //% jsdoc.loc.de="Schaltet in einem 8x8-Muster den Wert an Position (x,y) zwischen 0 und 1 um."
+  //% x.min=0 x.max=7 y.min=0 y.max=7 group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function toggleValueInMatrix(matrix: number[][], x: number, y: number) {
     if (matrix[x][y] == 1) matrix[x][y] = 0
     else if (matrix[x][y] == 0) matrix[x][y] = 1
   }
 
   /**
-     * Shift an 8x8 pattern horizontally or vertically by a given offset
-     */
+   * Shift an 8x8 pattern horizontally or vertically by a given offset
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
   //% block="Shift an 8x8 pattern %matrix|Offset left-right %offsetLR|Offset up-down %offsetUD"
+  //% block.loc.de="8x8-Muster %matrix verschieben|Offset links-rechts %offsetLR|Offset hoch-runter %offsetUD"
+  //% jsdoc.loc.de="Verschiebt ein 8x8-Muster horizontal und vertikal um die angegebenen Offsets."
   //% offsetLR.defl=0 offsetUD.defl=0
   //% group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function shift8x8Pattern(matrix: number[][], offsetLR: number, offsetUD: number) {
@@ -809,10 +835,13 @@ namespace max7219_matrix {
 
 
   /**
-     * Rotate an 8x8 pattern 
-     */
+   * Rotate an 8x8 pattern 
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir" rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+  //% block="Rotate an 8x8 pattern %matrix|direction %rotationDir"
+  //% block.loc.de="8x8-Muster %matrix drehen|Richtung %rotationDir"
+  //% jsdoc.loc.de="Dreht ein 8x8-Muster im Uhrzeigersinn, gegen den Uhrzeigersinn oder um 180°."
+  //% rotationDir.defl=rotation_direction.clockwise group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function rotate8x8Pattern(matrix: number[][], rotationDir: rotation_direction) {
     if (rotationDir == rotation_direction.none) return matrix
     let m = getEmptyMatrix()
@@ -850,10 +879,13 @@ namespace max7219_matrix {
   }
 
   /**
-     * Flip an 8x8 pattern horizontally or vertically
-     */
+   * Flip an 8x8 pattern horizontally or vertically
+   */
   //% matrix.shadow="max7219_matrix__default8x8Pattern"
-  //% block="Flip an 8x8 pattern %matrix|direction %flipDir" flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
+  //% block="Flip an 8x8 pattern %matrix|direction %flipDir"
+  //% block.loc.de="8x8-Muster %matrix spiegeln|Richtung %flipDir"
+  //% jsdoc.loc.de="Spiegelt ein 8x8-Muster horizontal oder vertikal."
+  //% flipDir.defl=flip_direction.vertical group="4. Set custom LED pattern on matrixs" blockExternalInputs=true advanced=true
   export function flip8x8Pattern(matrix: number[][], flipDir: flip_direction) {
     if (flipDir == flip_direction.none) return matrix
     let m = getEmptyMatrix()
@@ -875,15 +907,15 @@ namespace max7219_matrix {
   }
 
   /**
-     * (internal function) Get the length of the letter to be written.
-     */
+   * (internal function) Get the length of the letter to be written.
+   */
   function _getGlyphLen(index: number): number {
     return fontLen[index] || 0
   }
 
   /**
-     * (internal function) Get the coloumn-data of the letter to be written.
-     */
+   * (internal function) Get the coloumn-data of the letter to be written.
+   */
   function _getGlyphColumns(index: number): number[] {
     const off = fontOffs[index]
     const len = fontLen[index] || 0
@@ -904,18 +936,6 @@ namespace max7219_matrix {
     }
     return cols
   }
-  /*
-function _getGlyphColumns(index: number): number[] {
-const len = fontLen[index] || 0
-const off = fontOffs[index] || 0
-const cols: number[] = []
-for (let i = 0; i < len; i++) {
-cols.push(fontData[off + i])
-}
-return cols
-}
-*/
-
 
   // ASCII letters borrowed from https://github.com/lyle/matrix-led-font/blob/master/src/index.js
 
@@ -937,8 +957,6 @@ return cols
   const fontLen: number[] = [
     4, 2, 4, 6, 5, 6, 6, 2, 4, 4, 6, 6, 3, 3, 3, 5, 5, 4, 5, 5, 5, 5, 5, 5, 5, 5, 2, 3, 4, 4, 4, 5, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 6, 6, 5, 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 4, 3, 5, 3, 5, 2, 5, 5, 5, 5, 5, 4, 5, 5, 4, 5, 5, 4, 6, 5, 5, 5, 5, 5, 5, 4, 5, 6, 6, 6, 5, 4, 4, 2, 4, 5, 4, 5, 4, 6, 2
   ]
-
-
 
   const fontData = hex`
       00 00 00 00      
@@ -1048,6 +1066,7 @@ return cols
       14 1C 36 55 55 00
       03 00
     `
+    
   /*
  const fontData = hex`
    00 00 00 00         // " "
@@ -1152,634 +1171,37 @@ return cols
    41 36 08 00         // "}"
    08 04 08 04 00      // "~"
    02 01 02 00         // "^"
+   06 09 09 06 00      // "°"
+   9E A5 79 00         // "§"
+   14 1C 36 55 55 00   // "€"
+   03 00               // "'"
  `
   */
-  /*
-     const fontData: number[] = [
-       0b00000000, 0b00000000, 0b00000000, 0b00000000                        ,  // " "
-       0b01011111, 0b00000000                                                ,  // "!"
-       0b00000011, 0b00000000, 0b00000011, 0b00000000                        ,  // "\""
-       0b00010100, 0b00111110, 0b00010100, 0b00111110, 0b00010100, 0b00000000,  // "#"
-       0b00100100, 0b01101010, 0b00101011, 0b00010010, 0b00000000            ,  // "$"
-       0b01100011, 0b00010011, 0b00001000, 0b01100100, 0b01100011, 0b00000000,  // "%"
-       0b00110110, 0b01001001, 0b01010110, 0b00100000, 0b01010000, 0b00000000,  // "&"
-       0b00000011, 0b00000000                                                ,  // "\'"
-       0b00011100, 0b00100010, 0b01000001, 0b00000000                        ,  // "("
-       0b01000001, 0b00100010, 0b00011100, 0b00000000                        ,  // ")"
-       0b00101000, 0b00011000, 0b00001110, 0b00011000, 0b00101000, 0b00000000,  // "*"
-       0b00001000, 0b00001000, 0b00111110, 0b00001000, 0b00001000, 0b00000000,  // "+"
-       0b10110000, 0b01110000, 0b00000000                                    ,  // ","
-       0b00001000, 0b00001000, 0b00001000                                    ,  // "-"
-       0b01100000, 0b01100000, 0b00000000                                    ,  // "."
-       0b01100000, 0b00011000, 0b00000110, 0b00000001, 0b00000000            ,  // "/"
-       0b00111110, 0b01000001, 0b01000001, 0b00111110, 0b00000000            ,  // "0"
-       0b01000010, 0b01111111, 0b01000000, 0b00000000                        ,  // "1"
-       0b01100010, 0b01010001, 0b01001001, 0b01000110, 0b00000000            ,  // "2"
-       0b00100010, 0b01000001, 0b01001001, 0b00110110, 0b00000000            ,  // "3"
-       0b00011000, 0b00010100, 0b00010010, 0b01111111, 0b00000000            ,  // "4"
-       0b00100111, 0b01000101, 0b01000101, 0b00111001, 0b00000000            ,  // "5"
-       0b00111110, 0b01001001, 0b01001001, 0b00110000, 0b00000000            ,  // "6"
-       0b01100001, 0b00010001, 0b00001001, 0b00000111, 0b00000000            ,  // "7"
-       0b00110110, 0b01001001, 0b01001001, 0b00110110, 0b00000000            ,  // "8"
-       0b00000110, 0b01001001, 0b01001001, 0b00111110, 0b00000000            ,  // "9"
-       0b00010100, 0b00000000                                                ,  // ":"
-       0b00100000, 0b00010100, 0b00000000                                    ,  // ";"
-       0b00001000, 0b00010100, 0b00100010, 0b00000000                        ,  // "<"
-       0b00010100, 0b00010100, 0b00010100, 0b00000000                        ,  // "="
-       0b00100010, 0b00010100, 0b00001000, 0b00000000                        ,  // ">"
-       0b00000010, 0b01011001, 0b00001001, 0b00000110, 0b00000000            ,  // "?"
-       0b00111110, 0b01001001, 0b01010101, 0b01011101, 0b00001110, 0b00000000,  // "@"
-       0b01111110, 0b00010001, 0b00010001, 0b01111110, 0b00000000            ,  // "A"
-       0b01111111, 0b01001001, 0b01001001, 0b00110110, 0b00000000            ,  // "B"
-       0b00111110, 0b01000001, 0b01000001, 0b00100010, 0b00000000            ,  // "C"
-       0b01111111, 0b01000001, 0b01000001, 0b00111110, 0b00000000            ,  // "D"
-       0b01111111, 0b01001001, 0b01001001, 0b01000001, 0b00000000            ,  // "E"
-       0b01111111, 0b00001001, 0b00001001, 0b00000001, 0b00000000            ,  // "F"
-       0b00111110, 0b01000001, 0b01001001, 0b01111010, 0b00000000            ,  // "G"
-       0b01111111, 0b00001000, 0b00001000, 0b01111111, 0b00000000            ,  // "H"
-       0b01000001, 0b01111111, 0b01000001, 0b00000000                        ,  // "I"
-       0b00110000, 0b01000000, 0b01000001, 0b00111111, 0b00000000            ,  // "J"
-       0b01111111, 0b00001000, 0b00010100, 0b01100011, 0b00000000            ,  // "K"
-       0b01111111, 0b01000000, 0b01000000, 0b01000000, 0b00000000            ,  // "L"
-       0b01111111, 0b00000010, 0b00001100, 0b00000010, 0b01111111, 0b00000000,  // "M"
-       0b01111111, 0b00000100, 0b00001000, 0b00010000, 0b01111111, 0b00000000,  // "N"
-       0b00111110, 0b01000001, 0b01000001, 0b00111110, 0b00000000            ,  // "O"
-       0b01111111, 0b00001001, 0b00001001, 0b00000110, 0b00000000            ,  // "P"
-       0b00111110, 0b01000001, 0b01000001, 0b10111110, 0b00000000            ,  // "Q"
-       0b01111111, 0b00001001, 0b00001001, 0b01110110, 0b00000000            ,  // "R"
-       0b01000110, 0b01001001, 0b01001001, 0b00110010, 0b00000000            ,  // "S"
-       0b00000001, 0b00000001, 0b01111111, 0b00000001, 0b00000001, 0b00000000,  // "T"
-       0b00111111, 0b01000000, 0b01000000, 0b00111111, 0b00000000            ,  // "U"
-       0b00001111, 0b00110000, 0b01000000, 0b00110000, 0b00001111, 0b00000000,  // "V"
-       0b00111111, 0b01000000, 0b00111000, 0b01000000, 0b00111111, 0b00000000,  // "W"
-       0b01100011, 0b00010100, 0b00001000, 0b00010100, 0b01100011, 0b00000000,  // "X"
-       0b00000111, 0b00001000, 0b01110000, 0b00001000, 0b00000111, 0b00000000,  // "Y"
-       0b01100001, 0b01010001, 0b01001001, 0b01000111, 0b00000000            ,  // "Z"
-       0b01111101, 0b00010010, 0b00010010, 0b01111101, 0b00000000            ,  // "Ä"
-       0b00100001, 0b01010100, 0b01010100, 0b01111001, 0b00000000            ,  // "ä"
-       0b00111101, 0b01000010, 0b01000010, 0b00111101, 0b00000000            ,  // "Ö"
-       0b00111001, 0b01000100, 0b01000100, 0b00111001, 0b00000000            ,  // "ö"
-       0b00111101, 0b01000000, 0b01000000, 0b00111101, 0b00000000            ,  // "Ü"
-       0b00111010, 0b01000000, 0b01000000, 0b00111010, 0b00000000            ,  // "ü"
-       0b11111110, 0b00101001, 0b00110110, 0b00000000                        ,  // "ß"
-       0b01111111, 0b01000001, 0b00000000                                    ,  // "["
-       0b00000001, 0b00000110, 0b00011000, 0b01100000, 0b00000000            ,  // "\\"
-       0b01000001, 0b01111111, 0b00000000                                    ,  // "]"
-       0b01000000, 0b01000000, 0b01000000, 0b01000000, 0b00000000            ,  // "_"
-       0b00000011, 0b00000000                                                ,  // "\'"
-       0b00100000, 0b01010100, 0b01010100, 0b01111000, 0b00000000            ,  // "a"
-       0b01111111, 0b01000100, 0b01000100, 0b00111000, 0b00000000            ,  // "b"
-       0b00111000, 0b01000100, 0b01000100, 0b00101000, 0b00000000            ,  // "c"
-       0b00111000, 0b01000100, 0b01000100, 0b01111111, 0b00000000            ,  // "d"
-       0b00111000, 0b01010100, 0b01010100, 0b00011000, 0b00000000            ,  // "e"
-       0b00000100, 0b01111110, 0b00000101, 0b00000000                        ,  // "f"
-       0b10011000, 0b10100100, 0b10100100, 0b01111000, 0b00000000            ,  // "g"
-       0b01111111, 0b00000100, 0b00000100, 0b01111000, 0b00000000            ,  // "h"
-       0b01000100, 0b01111101, 0b01000000, 0b00000000                        ,  // "i"
-       0b01000000, 0b10000000, 0b10000100, 0b01111101, 0b00000000            ,  // "j"
-       0b01111111, 0b00010000, 0b00101000, 0b01000100, 0b00000000            ,  // "k"
-       0b01000001, 0b01111111, 0b01000000, 0b00000000                        ,  // "l"
-       0b01111100, 0b00000100, 0b01111100, 0b00000100, 0b01111000, 0b00000000,  // "m"
-       0b01111100, 0b00000100, 0b00000100, 0b01111000, 0b00000000            ,  // "n"
-       0b00111000, 0b01000100, 0b01000100, 0b00111000, 0b00000000            ,  // "o"
-       0b11111100, 0b00100100, 0b00100100, 0b00011000, 0b00000000            ,  // "p"
-       0b00011000, 0b00100100, 0b00100100, 0b11111100, 0b00000000            ,  // "q"
-       0b01111100, 0b00001000, 0b00000100, 0b00000100, 0b00000000            ,  // "r"
-       0b01001000, 0b01010100, 0b01010100, 0b00100100, 0b00000000            ,  // "s"
-       0b00000100, 0b00111111, 0b01000100, 0b00000000                        ,  // "t"
-       0b00111100, 0b01000000, 0b01000000, 0b01111100, 0b00000000            ,  // "u"
-       0b00011100, 0b00100000, 0b01000000, 0b00100000, 0b00011100, 0b00000000,  // "v"
-       0b00111100, 0b01000000, 0b00111100, 0b01000000, 0b00111100, 0b00000000,  // "w"
-       0b01000100, 0b00101000, 0b00010000, 0b00101000, 0b01000100, 0b00000000,  // "x"
-       0b10011100, 0b10100000, 0b10100000, 0b01111100, 0b00000000            ,  // "y"
-       0b01100100, 0b01010100, 0b01001100, 0b00000000                        ,  // "z"
-       0b00001000, 0b00110110, 0b01000001, 0b00000000                        ,  // "{"
-       0b01111111, 0b00000000                                                ,  // "|"
-       0b01000001, 0b00110110, 0b00001000, 0b00000000                        ,  // "}"
-       0b00001000, 0b00000100, 0b00001000, 0b00000100, 0b00000000            ,  // "~"
-       0b00000010, 0b00000001, 0b00000010, 0b00000000                        ,  // "^"
-     ]
-     
-     /*
-     let letter_matrix = [
-         [0b00000000,
-             0b00000000,
-             0b00000000,
-             0b00000000],
-         [0b01011111,
-             0b00000000],
-         [0b00000011,
-             0b00000000,
-             0b00000011,
-             0b00000000],
-         [0b00010100,
-             0b00111110,
-             0b00010100,
-             0b00111110,
-             0b00010100,
-             0b00000000],
-         [0b00100100,
-             0b01101010,
-             0b00101011,
-             0b00010010,
-             0b00000000],
-         [0b01100011,
-             0b00010011,
-             0b00001000,
-             0b01100100,
-             0b01100011,
-             0b00000000],
-         [0b00110110,
-             0b01001001,
-             0b01010110,
-             0b00100000,
-             0b01010000,
-             0b00000000],
-         [0b00000011,
-             0b00000000],
-         [0b00011100,
-             0b00100010,
-             0b01000001,
-             0b00000000],
-         [0b01000001,
-             0b00100010,
-             0b00011100,
-             0b00000000],
-         [0b00101000,
-             0b00011000,
-             0b00001110,
-             0b00011000,
-             0b00101000,
-             0b00000000],
-         [0b00001000,
-             0b00001000,
-             0b00111110,
-             0b00001000,
-             0b00001000,
-             0b00000000],
-         [0b10110000,
-             0b01110000,
-             0b00000000],
-         [0b00001000,
-             0b00001000,
-             0b00001000],
-         [0b01100000,
-             0b01100000,
-             0b00000000],
-         [0b01100000,
-             0b00011000,
-             0b00000110,
-             0b00000001,
-             0b00000000],
-         [0b00111110,
-             0b01000001,
-             0b01000001,
-             0b00111110,
-             0b00000000],
-         [0b01000010,
-             0b01111111,
-             0b01000000,
-             0b00000000],
-         [0b01100010,
-             0b01010001,
-             0b01001001,
-             0b01000110,
-             0b00000000],
-         [0b00100010,
-             0b01000001,
-             0b01001001,
-             0b00110110,
-             0b00000000],
-         [0b00011000,
-             0b00010100,
-             0b00010010,
-             0b01111111,
-             0b00000000],
-         [0b00100111,
-             0b01000101,
-             0b01000101,
-             0b00111001,
-             0b00000000],
-         [0b00111110,
-             0b01001001,
-             0b01001001,
-             0b00110000,
-             0b00000000],
-         [0b01100001,
-             0b00010001,
-             0b00001001,
-             0b00000111,
-             0b00000000],
-         [0b00110110,
-             0b01001001,
-             0b01001001,
-             0b00110110,
-             0b00000000],
-         [0b00000110,
-             0b01001001,
-             0b01001001,
-             0b00111110,
-             0b00000000],
-         [0b00010100,
-             0b00000000],
-         [0b00100000,
-             0b00010100,
-             0b00000000],
-         [0b00001000,
-             0b00010100,
-             0b00100010,
-             0b00000000],
-         [0b00010100,
-             0b00010100,
-             0b00010100,
-             0b00000000],
-         [0b00100010,
-             0b00010100,
-             0b00001000,
-             0b00000000],
-         [0b00000010,
-             0b01011001,
-             0b00001001,
-             0b00000110,
-             0b00000000],
-         [0b00111110,
-             0b01001001,
-             0b01010101,
-             0b01011101,
-             0b00001110,
-             0b00000000],
-         [0b01111110,
-             0b00010001,
-             0b00010001,
-             0b01111110,
-             0b00000000],
-         [0b01111111,
-             0b01001001,
-             0b01001001,
-             0b00110110,
-             0b00000000],
-         [0b00111110,
-             0b01000001,
-             0b01000001,
-             0b00100010,
-             0b00000000],
-         [0b01111111,
-             0b01000001,
-             0b01000001,
-             0b00111110,
-             0b00000000],
-         [0b01111111,
-             0b01001001,
-             0b01001001,
-             0b01000001,
-             0b00000000],
-         [0b01111111,
-             0b00001001,
-             0b00001001,
-             0b00000001,
-             0b00000000],
-         [0b00111110,
-             0b01000001,
-             0b01001001,
-             0b01111010,
-             0b00000000],
-         [0b01111111,
-             0b00001000,
-             0b00001000,
-             0b01111111,
-             0b00000000],
-         [0b01000001,
-             0b01111111,
-             0b01000001,
-             0b00000000],
-         [0b00110000,
-             0b01000000,
-             0b01000001,
-             0b00111111,
-             0b00000000],
-         [0b01111111,
-             0b00001000,
-             0b00010100,
-             0b01100011,
-             0b00000000],
-         [0b01111111,
-             0b01000000,
-             0b01000000,
-             0b01000000,
-             0b00000000],
-         [0b01111111,
-             0b00000010,
-             0b00001100,
-             0b00000010,
-             0b01111111,
-             0b00000000],
-         [0b01111111,
-             0b00000100,
-             0b00001000,
-             0b00010000,
-             0b01111111,
-             0b00000000],
-         [0b00111110,
-             0b01000001,
-             0b01000001,
-             0b00111110,
-             0b00000000],
-         [0b01111111,
-             0b00001001,
-             0b00001001,
-             0b00000110,
-             0b00000000],
-         [0b00111110,
-             0b01000001,
-             0b01000001,
-             0b10111110,
-             0b00000000],
-         [0b01111111,
-             0b00001001,
-             0b00001001,
-             0b01110110,
-             0b00000000],
-         [0b01000110,
-             0b01001001,
-             0b01001001,
-             0b00110010,
-             0b00000000],
-         [0b00000001,
-             0b00000001,
-             0b01111111,
-             0b00000001,
-             0b00000001,
-             0b00000000],
-         [0b00111111,
-             0b01000000,
-             0b01000000,
-             0b00111111,
-             0b00000000],
-         [0b00001111,
-             0b00110000,
-             0b01000000,
-             0b00110000,
-             0b00001111,
-             0b00000000],
-         [0b00111111,
-             0b01000000,
-             0b00111000,
-             0b01000000,
-             0b00111111,
-             0b00000000],
-         [0b01100011,
-             0b00010100,
-             0b00001000,
-             0b00010100,
-             0b01100011,
-             0b00000000],
-         [0b00000111,
-             0b00001000,
-             0b01110000,
-             0b00001000,
-             0b00000111,
-             0b00000000],
-         [0b01100001,
-             0b01010001,
-             0b01001001,
-             0b01000111,
-             0b00000000], //Z
-         [0b01111101,
-           0b00010010,
-           0b00010010,
-           0b01111101,
-           0b00000000], //Ä
-         [ 0b00100001,
-           0b01010100,
-           0b01010100,
-           0b01111001,
-           0b00000000], //ä
-         [ 0b00111101,
-           0b01000010,
-           0b01000010,
-           0b00111101,
-           0b00000000], //Ö
-         [ 0b00111001,
-           0b01000100,
-           0b01000100,
-           0b00111001,
-           0b00000000], //ö
-         [ 0b00111101,
-           0b01000000,
-           0b01000000,
-           0b00111101,
-           0b00000000], //Ü
-         [ 0b00111010,
-           0b01000000,
-           0b01000000,
-           0b00111010,
-           0b00000000], //ü
-         [ 0b11111110,
-           0b00101001,
-           0b00110110,
-           0b00000000], //ß
-         [0b01111111,
-             0b01000001,
-             0b00000000],
-         [0b00000001,
-             0b00000110,
-             0b00011000,
-             0b01100000,
-             0b00000000],
-         [0b01000001,
-             0b01111111,
-             0b00000000],
-         [0b01000000,
-             0b01000000,
-             0b01000000,
-             0b01000000,
-             0b00000000],
-         [0b00000001,
-             0b00000010,
-             0b00000000],
-         [0b00100000,
-             0b01010100,
-             0b01010100,
-             0b01111000,
-             0b00000000],
-         [0b01111111,
-             0b01000100,
-             0b01000100,
-             0b00111000,
-             0b00000000],
-         [0b00111000,
-             0b01000100,
-             0b01000100,
-             0b00101000,
-             0b00000000],
-         [0b00111000,
-             0b01000100,
-             0b01000100,
-             0b01111111,
-             0b00000000],
-         [0b00111000,
-             0b01010100,
-             0b01010100,
-             0b00011000,
-             0b00000000],
-         [0b00000100,
-             0b01111110,
-             0b00000101,
-             0b00000000],
-         [0b10011000,
-             0b10100100,
-             0b10100100,
-             0b01111000,
-             0b00000000],
-         [0b01111111,
-             0b00000100,
-             0b00000100,
-             0b01111000,
-             0b00000000],
-         [0b01000100,
-             0b01111101,
-             0b01000000,
-             0b00000000],
-         [0b01000000,
-             0b10000000,
-             0b10000100,
-             0b01111101,
-             0b00000000],
-         [0b01111111,
-             0b00010000,
-             0b00101000,
-             0b01000100,
-             0b00000000],
-         [0b01000001,
-             0b01111111,
-             0b01000000,
-             0b00000000],
-         [0b01111100,
-             0b00000100,
-             0b01111100,
-             0b00000100,
-             0b01111000,
-             0b00000000],
-         [0b01111100,
-             0b00000100,
-             0b00000100,
-             0b01111000,
-             0b00000000],
-         [0b00111000,
-             0b01000100,
-             0b01000100,
-             0b00111000,
-             0b00000000],
-         [0b11111100,
-             0b00100100,
-             0b00100100,
-             0b00011000,
-             0b00000000],
-         [0b00011000,
-             0b00100100,
-             0b00100100,
-             0b11111100,
-             0b00000000],
-         [0b01111100,
-             0b00001000,
-             0b00000100,
-             0b00000100,
-             0b00000000],
-         [0b01001000,
-             0b01010100,
-             0b01010100,
-             0b00100100,
-             0b00000000],
-         [0b00000100,
-             0b00111111,
-             0b01000100,
-             0b00000000],
-         [0b00111100,
-             0b01000000,
-             0b01000000,
-             0b01111100,
-             0b00000000],
-         [0b00011100,
-             0b00100000,
-             0b01000000,
-             0b00100000,
-             0b00011100,
-             0b00000000],
-         [0b00111100,
-             0b01000000,
-             0b00111100,
-             0b01000000,
-             0b00111100,
-             0b00000000],
-         [0b01000100,
-             0b00101000,
-             0b00010000,
-             0b00101000,
-             0b01000100,
-             0b00000000],
-         [0b10011100,
-             0b10100000,
-             0b10100000,
-             0b01111100,
-             0b00000000],
-         [0b01100100,
-             0b01010100,
-             0b01001100,
-             0b00000000],
-         [0b00001000,
-             0b00110110,
-             0b01000001,
-             0b00000000],
-         [0b01111111,
-             0b00000000],
-         [0b01000001,
-             0b00110110,
-             0b00001000,
-             0b00000000],
-         [0b00001000,
-             0b00000100,
-             0b00001000,
-             0b00000100,
-             0b00000000],
-         [0b00000010,
-             0b00000001,
-             0b00000010,
-             0b00000000]]
-         */
-
 }
 
 enum rotation_direction {
   //% block="none"
+  //% block.loc.de="keine"
   none = 0,
   //% block="clockwise"
+  //% block.loc.de="90° im Uhrzeigersinn"
   clockwise = 1,
   //% block="counter-clockwise"
+  //% block.loc.de="90° gegen den Uhrzeigersinn"
   counterclockwise = 2,
   //% block="180-degree"
+  //% block.loc.de="180°"
   one_eighty_degree = 3
 }
 
 enum flip_direction {
   //% block="none"
+  //% block.loc.de="keine"
   none = 0,
   //% block="horizontal"
+  //% block.loc.de="horizontal"
   horizontal = 1,
   //% block="vertical"
+  //% block.loc.de="vertikal"
   vertical = 2
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
