@@ -47,14 +47,14 @@ namespace max7219_matrix {
     }
 
     pins.digitalWritePin(_pinCS, 1)
-    control.waitMicros(TM1637_PAUSE_TIME_US);
+    //control.waitMicros(TM1637_PAUSE_TIME_US);
     basic.pause(1)
 
     // set micro:bit SPI
     pins.spiPins(mosi, miso, sck)
     pins.spiFormat(8, 3)
     //pins.spiFormat(8, 0)
-    pins.spiFrequency(10000)
+    pins.spiFrequency(1000000)
     // initialize MAX7219s
     _registerAll(_SHUTDOWN, 0) // turn off
     _registerAll(_DISPLAYTEST, 0) // test mode off
@@ -94,17 +94,17 @@ namespace max7219_matrix {
    */
   function _registerAll(addressCode: number, data: number) {
     pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
-    control.waitMicros(TM1637_PAUSE_TIME_US);
+    //control.waitMicros(TM1637_PAUSE_TIME_US);
     for (let i = 0; i < _matrixNum; i++) {
       // when a MAX7219 received a new command/data set
       // the previous one would be pushed to the next matrix along the chain via DOUT
       pins.spiWrite(addressCode) // command (8 bits)
-      control.waitMicros(TM1637_PAUSE_TIME_US);
+      //control.waitMicros(TM1637_PAUSE_TIME_US);
       pins.spiWrite(data) //data (8 bits)
-      control.waitMicros(TM1637_PAUSE_TIME_US);
+      //control.waitMicros(TM1637_PAUSE_TIME_US);
     }
     pins.digitalWritePin(_pinCS, 1) // LOAD=HIGH, commands take effect
-    control.waitMicros(TM1637_PAUSE_TIME_US);
+    //control.waitMicros(TM1637_PAUSE_TIME_US);
   }
 
   /**
@@ -113,24 +113,24 @@ namespace max7219_matrix {
   function _registerForOne(addressCode: number, data: number, matrixIndex: number) {
     if (matrixIndex <= _matrixNum - 1) {
       pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
-      control.waitMicros(TM1637_PAUSE_TIME_US);
+      //control.waitMicros(TM1637_PAUSE_TIME_US);
       for (let i = 0; i < _matrixNum; i++) {
         // when a MAX7219 received a new command/data set
         // the previous one would be pushed to the next matrix along the chain via DOUT
         if (i == matrixIndex) { // send change to target
           pins.spiWrite(addressCode) // command (8 bits)
-          control.waitMicros(TM1637_PAUSE_TIME_US);
+          //control.waitMicros(TM1637_PAUSE_TIME_US);
           pins.spiWrite(data) //data (8 bits)
-          control.waitMicros(TM1637_PAUSE_TIME_US);
+          //control.waitMicros(TM1637_PAUSE_TIME_US);
         } else { // do nothing to non-targets
           pins.spiWrite(_NOOP)
-          control.waitMicros(TM1637_PAUSE_TIME_US);
+          //control.waitMicros(TM1637_PAUSE_TIME_US);
           pins.spiWrite(0)
-          control.waitMicros(TM1637_PAUSE_TIME_US);
+          //control.waitMicros(TM1637_PAUSE_TIME_US);
         }
       }
       pins.digitalWritePin(_pinCS, 1) // LOAD=HIGH, commands take effect
-      control.waitMicros(TM1637_PAUSE_TIME_US);
+      //control.waitMicros(TM1637_PAUSE_TIME_US);
     }
   }
 
@@ -1217,6 +1217,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
