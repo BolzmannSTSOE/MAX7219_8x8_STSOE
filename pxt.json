@@ -5,7 +5,7 @@
     "longDescription": "Extension for MakeCode to use with Calliope to control one or more 8x8-Matrix-Displays with MAX7219.",
     "description.de": "Erweiterung zur Anzeige auf MAX7219 8x8 Matrixdisplays.",
     "longDescription.de": "Erweiterung für MAX7219 LED Matrix Module. Unterstützt Scrolltext, feste Texte, Muster, Rotation, Spiegeln und mehr.",
-    "icon": "./icon.png",
+    "icon": "icon.png",
     "dependencies": {
         "core": "*"
     },
