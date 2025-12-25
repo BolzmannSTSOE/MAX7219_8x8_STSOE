@@ -17,7 +17,7 @@ namespace max7219_matrix {
   const _NOOP = 0 // no-op (do nothing, doesn't change current status)
   const _DIGIT = [1, 2, 3, 4, 5, 6, 7, 8] // digit (LED column)
   const _DECODEMODE = 9 // decode mode (1=on, 0-off; for 7-segment display on MAX7219, no usage here)
-  const _INTENSITY = 10 // intensity (LED brightness level, 0-15)
+  const _INTENSITY = 10 // intensity-Register (LED brightness level, 0-15)
   const _SCANLIMIT = 11 // scan limit (number of scanned digits)
   const _SHUTDOWN = 12 // turn on (1) or off (0)
   const _DISPLAYTEST = 15 // force all LEDs light up, no usage here
@@ -60,7 +60,7 @@ namespace max7219_matrix {
     _registerAll(_DISPLAYTEST, 0) // test mode off
     _registerAll(_DECODEMODE, 0) // decode mode off
     _registerAll(_SCANLIMIT, 7) // set scan limit to 7 (column 0-7)
-    _registerAll(_INTENSITY, 15) // set brightness to 15
+    _registerAll(_INTENSITY, 1) // set brightness to 15
     _registerAll(_SHUTDOWN, 1) // turn on
     clearAll() // clear screen on all MAX7219s
   }
@@ -1217,6 +1217,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
