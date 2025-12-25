@@ -800,7 +800,7 @@ namespace max7219_matrix {
     let m = getEmptyMatrix()
     for (let x = 0; x < 8; x++){
       for (let y = 0; y < 8; y++){
-        m[x][y] = matrix[x][y] > 0 ? 0 : 1
+        m[x][y] = 1 - matrix[x][y]
       }
     }
     return m
@@ -1217,6 +1217,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
