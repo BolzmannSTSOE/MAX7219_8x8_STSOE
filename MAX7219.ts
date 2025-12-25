@@ -200,7 +200,7 @@ namespace max7219_matrix {
         const w = _getGlyphLen(index)
         chrCountdown.push(w)
         totalScrollTime += w
-      }
+      } else {if (_debugEnabled) scrollText("Error scrollText: Zeichen `" + text.substr(i, 1) + "` nicht gefunden", 75, 500)}
     }
     totalScrollTime += _matrixNum * 8
     // print characters into array and scroll the array
@@ -215,7 +215,7 @@ namespace max7219_matrix {
         // wait until current character scrolled into visible area
         nextChrCountdown = chrCountdown[currentChrIndex]
         currentChrIndex += 1
-      }
+      } 
       // scroll array (copy all columns to the one before it)
       for (let j = 0; j < _displayArray.length - 1; j++) {
         _displayArray[j] = _displayArray[j + 1]
@@ -1764,6 +1764,7 @@ enum flip_direction {
   //% block="vertical"
   vertical = 2
 }
+
 
 
 
