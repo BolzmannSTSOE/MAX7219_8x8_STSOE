@@ -23,6 +23,7 @@ namespace max7219_matrix {
   const _DISPLAYTEST = 15 // force all LEDs light up, no usage here
   let _pinCS = DigitalPin.C16 // LOAD pin, 0=ready to receive command, 1=command take effect
   let _matrixNum = 1 // number of MAX7219 matrix linked in the chain
+  let _buf: Buffer
   let _displayArray: number[] = [] // display array to show accross all matrixs
   let _rotation = 0 // rotate matrixs display for 4-in-1 modules
   let _reversed = false // reverse matrixs display order for 4-in-1 modules
@@ -41,6 +42,7 @@ namespace max7219_matrix {
     // set internal variables        
     _pinCS = cs
     _matrixNum = num
+    _buf = pins.createBuffer(num * 8)
     // prepare display array (for displaying texts; add extra 8 columns at each side as buffers)
     if (_displayArray.length < (num + 2) * 8) {
       for (let i = _displayArray.length; i < (num + 2) * 8; i++)  _displayArray.push(0)
@@ -93,6 +95,9 @@ namespace max7219_matrix {
    * (internal function) write command and data to all MAX7219s
    */
   function _registerAll(addressCode: number, data: number) {
+    if (addressCode >= 1 && addressCode <=8) {
+      if (true) { data = data ^ 0xFF }
+    }
     pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
     //control.waitMicros(TM1637_PAUSE_TIME_US);
     for (let i = 0; i < _matrixNum; i++) {
@@ -111,6 +116,9 @@ namespace max7219_matrix {
    * (internal function) write command and data to a specific MAX7219 (index 0=farthest on the chain)
    */
   function _registerForOne(addressCode: number, data: number, matrixIndex: number) {
+    if (addressCode >= 1 && addressCode <=8) {
+      if (true) { data = data ^ 0xFF }
+    }
     if (matrixIndex <= _matrixNum - 1) {
       pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
       //control.waitMicros(TM1637_PAUSE_TIME_US);
@@ -1219,6 +1227,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
