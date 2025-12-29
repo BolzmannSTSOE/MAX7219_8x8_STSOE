@@ -579,11 +579,12 @@ namespace max7219_matrix {
   }
 
   /**
-   * Turn on or off all MAX7219s
+   * Turn on or off all MAX7219s.
+   * Can be used to blink a picture.
    */
   //% block="Turn on all matrixs $status"
   //% block.loc.de="Alle Matrizen ein-(aus-)schalten $status"
-  //% jsdoc.loc.de="Schaltet alle MAX7219-Displays ein oder aus (Power-Down)."
+  //% jsdoc.loc.de="Schaltet alle MAX7219-Displays ein oder aus (Power-Down). Kann genutzt werden, um eine Anzeige blinken zu lassen."
   //% status.defl=true group="3. Basic light control" advanced=true
   export function togglePower(status: boolean) {
     if (status) _registerAll(_SHUTDOWN, 1)
@@ -1250,6 +1251,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
