@@ -23,10 +23,10 @@ namespace max7219_matrix {
   const _DISPLAYTEST = 15 // force all LEDs light up, no usage here
   let _pinCS = DigitalPin.C16 // LOAD pin, 0=ready to receive command, 1=command take effect
   let _matrixNum = 1 // number of MAX7219 matrix linked in the chain
-  let _buf: Buffer
   let _displayArray: number[] = [] // display array to show accross all matrixs
   let _rotation = 0 // rotate matrixs display for 4-in-1 modules
   let _reversed = false // reverse matrixs display order for 4-in-1 modules
+  let _inverted = false // inverts the matrix i.e. toggles each LED
   let customFontData: number[][] = [] // The array that will contain custom characters, is the user defines some
   let _debugEnabled = false // In debug mode, error messages will be printed on the MAX7219
   let TM1637_PAUSE_TIME_US = 10;
@@ -42,7 +42,6 @@ namespace max7219_matrix {
     // set internal variables        
     _pinCS = cs
     _matrixNum = num
-    _buf = pins.createBuffer(num * 8)
     // prepare display array (for displaying texts; add extra 8 columns at each side as buffers)
     if (_displayArray.length < (num + 2) * 8) {
       for (let i = _displayArray.length; i < (num + 2) * 8; i++)  _displayArray.push(0)
@@ -78,6 +77,18 @@ namespace max7219_matrix {
   export function setDebug(on: boolean) {
       _debugEnabled = on
   }
+  
+  /**
+   * Inverts the output on the MAX7219 display, i.e. each LED is toggled.
+   */
+  //% block="Invert Matrix %invert"
+  //% block.loc.de="Invertiere die Anzeige %invert"
+  //% jsdoc.loc.de="Konfiguriert, ob die Anzeige auf dem Display invertiert dargestellt werden soll, also jede LED wird umgeschaltet."
+  //% invert.defl=true
+  //% group="1. Setup" advanced=true
+  export function setInvertation(invert: boolean) {
+      _inverted = invert
+  }
 
   /**
    * Rotation/reverse order options for 4-in-1 MAX7219 modules
@@ -96,7 +107,7 @@ namespace max7219_matrix {
    */
   function _registerAll(addressCode: number, data: number) {
     if (addressCode >= 1 && addressCode <=8) {
-      if (true) { data = data ^ 0xFF }
+      if (_inverted) { data = data ^ 0xFF }
     }
     pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
     //control.waitMicros(TM1637_PAUSE_TIME_US);
@@ -117,7 +128,7 @@ namespace max7219_matrix {
    */
   function _registerForOne(addressCode: number, data: number, matrixIndex: number) {
     if (addressCode >= 1 && addressCode <=8) {
-      if (true) { data = data ^ 0xFF }
+      if (_inverted) { data = data ^ 0xFF }
     }
     if (matrixIndex <= _matrixNum - 1) {
       pins.digitalWritePin(_pinCS, 0) // LOAD=LOW, start to receive commands
@@ -611,7 +622,10 @@ namespace max7219_matrix {
   //% jsdoc.loc.de="Schaltet auf allen Displays alle LEDs ein."
   //% group="3. Basic light control"
   export function fillAll() {
+    let inv_tmp = _inverted
+    _inverted = false
     for (let i = 0; i < 8; i++) _registerAll(_DIGIT[i], 255)
+    _inverted = inv_tmp
   }
 
   /**
@@ -622,7 +636,10 @@ namespace max7219_matrix {
   //% jsdoc.loc.de="Schaltet auf einem einzelnen Display alle LEDs ein."
   //% index.min=0 group="3. Basic light control" advanced=true
   export function fillForOne(index: number) {
+    let inv_tmp = _inverted
+    _inverted = false
     for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], 255, index)
+    _inverted = inv_tmp
   }
 
   /**
@@ -633,7 +650,10 @@ namespace max7219_matrix {
   //% jsdoc.loc.de="Schaltet auf allen Displays alle LEDs aus."
   //% group="3. Basic light control"
   export function clearAll() {
+    let inv_tmp = _inverted
+    _inverted = false
     for (let i = 0; i < 8; i++) _registerAll(_DIGIT[i], 0)
+    _inverted = inv_tmp
   }
 
   /**
@@ -644,7 +664,10 @@ namespace max7219_matrix {
   //% jsdoc.loc.de="Schaltet auf einem einzelnen Display alle LEDs aus."
   //% index.min=0 group="3. Basic light control" advanced=true
   export function clearForOne(index: number) {
+    let inv_tmp = _inverted
+    _inverted = false
     for (let i = 0; i < 8; i++) _registerForOne(_DIGIT[i], 0, index)
+    _inverted = inv_tmp
   }
 
   /**
@@ -1227,6 +1250,7 @@ enum flip_direction {
   //% block.loc.de="vertikal"
   vertical = 2
 }
+
 
 
 
