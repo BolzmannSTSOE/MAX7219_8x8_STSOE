@@ -1,7 +1,7 @@
 {
     "name": "max7219_8x8_STSOE",
     "title": "MAX7219 8x8 Matrix Display",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Driver for MAX7219 8x8 Matrix using in MakeCode for Calliope",
     "longDescription": "Extension for MakeCode to use with Calliope to control one or more 8x8-Matrix-Displays with MAX7219.",
     "description.de": "Erweiterung zur Anzeige auf MAX7219 8x8 Matrixdisplay.",
